@@ -1,5 +1,5 @@
 #! /bin/bash
-SCRIPT_DIR="$(cd "$(dirname ${BASH_SOURCE[0]})"; pwd)"
+SCRIPT_DIR="$(cd "${BASH_SOURCE[0]%/*}"; pwd)"
 COMMENT="# executing synchronized script"
 
 echo "Setting up synchronized scripts from $SCRIPT_DIR ..."
