@@ -34,10 +34,12 @@ then
 else
   while [ -z $FOLDER ]
   do
-    read -p "Enter the repository URL:" FOLDER
+    read -p "Enter the script folder:" FOLDER
   done
 fi
-FOLDER="$(realpath $FOLDER)"
+#realpath
+FOLDER="${FOLDER/#\~/$HOME}"
+FOLDER="$(mkdir -p $FOLDER;cd $FOLDER;pwd)"
 
 if [ -z "$( git --version 2> /dev/null )" ]
 then
