@@ -1,4 +1,5 @@
 #! /bin/bash
+set -e
 echo "Running install script ..."
 
 # repository set up
