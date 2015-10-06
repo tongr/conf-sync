@@ -59,5 +59,5 @@ echo "Checking out repository $REPO to $FOLDER ..."
 # TODO select checkout dir
 git clone $REPO $FOLDER
 
-chmod u+x $FOLDER/install.sh
-. $FOLDER/install.sh
+chmod u+x $FOLDER/setup.sh
+. $FOLDER/setup.sh
