@@ -65,7 +65,8 @@ if [ "y" == "$answer" ]; then
   for i in "${cfgs[@]}"; do
     KV=(${i//=/ })
     SOURCE="$SH_SCRIPT_DIR/${KV[0]}"
-    DESTINATION="${KV[1]}"
+    DESTINATION="${KV[1]/#\~/$HOME}"
+    DESTINATION="$(mkdir -p $DESTINATION;cd $DESTINATION;pwd)"
     for SCRIPT in $(ls -a "$SOURCE"); do
       CALL_LINE="source $SOURCE/$SCRIPT"
       if [ ! -d "${SCRIPT}" ]; then
