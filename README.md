@@ -16,9 +16,10 @@ bash install-conf-sync.sh
 Note, Git.io is used for more convenience, the original url is https://raw.githubusercontent.com/conf-sync/conf-sync/master/install.sh.
 
 ## Upgrades
-To get upgrades, add the upstream repository to your local installation:
+To get upgrades, add the upstream repository to your local installation (prevent accidental pushing of private configs):
 ```sh
 git remote add upstream https://github.com/conf-sync/conf-sync.git
+git remote set-url --push upstream "you really don't want to do that"
 ```
 An upgrade can then be performed by:
 ```sh
