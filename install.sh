@@ -2,6 +2,21 @@
 set -e
 echo "Running install script ..."
 
+read_input () {
+  MSG="$1"
+  DEFAULT=""
+  if [[ -n $2 ]]; then
+    DEFAULT=$2
+    MSG="$1 (default: $DEFAULT)"
+  fi
+  RESULT=""
+  while [[ -z $RESULT ]]; do
+    read -p "$MSG: " input
+    RESULT=${input:-$DEFAULT}
+  done
+  echo "$RESULT"
+}
+
 # repository set up
 # set default repo to:
 REPO="https://github.com/conf-sync/conf-sync.git"
@@ -11,12 +26,11 @@ then
   REPO=$1
 elif [ ! -z $REPO ]
 then
-  read -p "Enter the repository URL (default: $REPO): " input
-  REPO=${input:-$REPO}
+  REPO=$(read_input "Enter the repository URL" $REPO)
 else
   while [ -z $REPO ]
   do
-    read -p "Enter the repository URL:" REPO
+    REPO=$(read_input "Enter the repository URL" )
   done
 fi
 
@@ -30,12 +44,11 @@ then
   FOLDER=$2
 elif [ ! -z $FOLDER ]
 then
-  read -p "Enter the script folder (default: $FOLDER): " input
-  FOLDER=${input:-$FOLDER}
+  FOLDER=$(read_input "Enter the script folder" $FOLDER)
 else
   while [ -z $FOLDER ]
   do
-    read -p "Enter the script folder:" FOLDER
+    FOLDER=$(read_input "Enter the script folder")
   done
 fi
 #realpath
@@ -59,7 +72,6 @@ else
 fi
 
 echo "Checking out repository $REPO to $FOLDER ..."
-# TODO select checkout dir
 git clone $REPO $FOLDER
 
 chmod u+x $FOLDER/setup.sh
