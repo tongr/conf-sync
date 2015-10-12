@@ -10,7 +10,7 @@ Please note, instead of the shown https-URLs you can also use ssh-URLs (i.e., fo
 ## Installation
 To create a local installation run:
 ```sh
-curl http://git.io/vcNms -o install-conf-sync.sh 
+curl -L http://git.io/vcNms -o install-conf-sync.sh
 bash install-conf-sync.sh
 ```
 Note, Git.io is used for more convenience, the original url is https://raw.githubusercontent.com/conf-sync/conf-sync/master/install.sh.
