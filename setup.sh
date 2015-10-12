@@ -73,10 +73,10 @@ if [ "y" == "$answer" ]; then
         if [ ! -e "$DESTINATION/$SCRIPT" ]; then
           answer=$(yes_no "Destination $DESTINATION/$SCRIPT for source script $SOURCE/$SCRIPT does not exist. Do you want to create the destination?")
           if [ "y" = "$answer" ]; then
-            echo -e "$COMMENT\n$CALL_LINE" > "$DESTINATION/$SCRIPT"
+            echo -e "\n$COMMENT\n$CALL_LINE\n" > "$DESTINATION/$SCRIPT"
           fi
         elif ! grep -q "$CALL_LINE" "$DESTINATION/$SCRIPT"; then
-          echo -e "$COMMENT\n$CALL_LINE" >> "$DESTINATION/$SCRIPT"
+          echo -e "\n$COMMENT\n$CALL_LINE\n" >> "$DESTINATION/$SCRIPT"
         fi
       fi
     done
