@@ -17,15 +17,6 @@ yes_no () {
   done
   echo "$RESULT"
 }
-read_config () {
-  RESULT=()
-  while read line || [ -n "$line" ]; do
-    if [[ ! -z  $line ]] && [[ ! $line =~ ^[[:space:]]*#.*$ ]]; then
-      RESULT+=("$line")
-    fi
-  done < $1
-  echo "${RESULT[@]}"
-}
 
 echo "Setting up synchronized scripts from $SCRIPT_DIR ..."
 
@@ -34,7 +25,7 @@ echo "Setting up synchronized scripts from $SCRIPT_DIR ..."
 #
 answer=$(yes_no "Do you want to install config links?")
 if [ "y" == "$answer" ]; then
-  IFS=' ' read -a cfgs <<< $(read_config "$LN_DIR/sync.conf")
+  IFS=' ' read -a cfgs <<< $(grep -vE "^\s*#.*$" "$LN_DIR/sync.conf")
   for i in "${cfgs[@]}"; do
     KV=(${i//=/ })
     SOURCE="$LN_DIR/${KV[0]}"
@@ -43,9 +34,7 @@ if [ "y" == "$answer" ]; then
     for SCRIPT in $(ls -a "$SOURCE"); do
       if [ ! -d "${SCRIPT}" ];then
         if [ -e "$DESTINATION/$SCRIPT" ]; then
-          if [[ -L "$DESTINATION/$SCRIPT" && "$(readlink $DESTINATION/$SCRIPT)" = "$SOURCE/$SCRIPT" ]]; then
-            # echo "$DESTINATION/$SCRIPT already links to $SOURCE/$SCRIPT" # nothing to do
-          else
+          if [[ ! -L "$DESTINATION/$SCRIPT" || "$(readlink $DESTINATION/$SCRIPT)" != "$SOURCE/$SCRIPT" ]]; then
             answer=$(yes_no "Do you want to overwrite the existing file $DESTINATION/$SCRIPT with $SOURCE/$SCRIPT?")
             if [ "y" = "$answer" ]; then
               rm "$DESTINATION/$SCRIPT"
@@ -65,7 +54,7 @@ fi
 #
 answer=$(yes_no "Do you want to install shell sources?")
 if [ "y" == "$answer" ]; then
-  IFS=' ' read -a cfgs <<< $(read_config "$SH_SCRIPT_DIR/sync.conf")
+  IFS=' ' read -a cfgs <<< $(grep -vE "^\s*#.*$" "$LN_DIR/sync.conf")
   for i in "${cfgs[@]}"; do
     KV=(${i//=/ })
     SOURCE="$SH_SCRIPT_DIR/${KV[0]}"
