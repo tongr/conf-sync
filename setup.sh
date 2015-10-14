@@ -43,10 +43,14 @@ if [ "y" == "$answer" ]; then
     for SCRIPT in $(ls -a "$SOURCE"); do
       if [ ! -d "${SCRIPT}" ];then
         if [ -e "$DESTINATION/$SCRIPT" ]; then
-          answer=$(yes_no "Do you want to overwrite the existing file $DESTINATION/$SCRIPT with $SOURCE/$SCRIPT?")
-          if [ "y" = "$answer" ]; then
-            rm "$DESTINATION/$SCRIPT"
-            ln -s "$SOURCE/$SCRIPT" "$DESTINATION/$SCRIPT"
+          if [[ -L "$DESTINATION/$SCRIPT" && "$(readlink $DESTINATION/$SCRIPT)" = "$SOURCE/$SCRIPT" ]]; then
+            # echo "$DESTINATION/$SCRIPT already links to $SOURCE/$SCRIPT" # nothing to do
+          else
+            answer=$(yes_no "Do you want to overwrite the existing file $DESTINATION/$SCRIPT with $SOURCE/$SCRIPT?")
+            if [ "y" = "$answer" ]; then
+              rm "$DESTINATION/$SCRIPT"
+              ln -s "$SOURCE/$SCRIPT" "$DESTINATION/$SCRIPT"
+            fi
           fi
         else
           ln -s "$SOURCE/$SCRIPT" "$DESTINATION/$SCRIPT"
