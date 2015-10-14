@@ -24,7 +24,7 @@ read_config () {
       RESULT+=("$line")
     fi
   done < $1
-  echo "$RESULT"
+  echo "${RESULT[@]}"
 }
 
 echo "Setting up synchronized scripts from $SCRIPT_DIR ..."
@@ -34,7 +34,7 @@ echo "Setting up synchronized scripts from $SCRIPT_DIR ..."
 #
 answer=$(yes_no "Do you want to install config links?")
 if [ "y" == "$answer" ]; then
-  cfgs=$(read_config "$LN_DIR/sync.conf")
+  IFS=' ' read -a cfgs <<< $(read_config "$LN_DIR/sync.conf")
   for i in "${cfgs[@]}"; do
     KV=(${i//=/ })
     SOURCE="$LN_DIR/${KV[0]}"
@@ -61,7 +61,7 @@ fi
 #
 answer=$(yes_no "Do you want to install shell sources?")
 if [ "y" == "$answer" ]; then
-  cfgs=$(read_config "$SH_SCRIPT_DIR/sync.conf")
+  IFS=' ' read -a cfgs <<< $(read_config "$SH_SCRIPT_DIR/sync.conf")
   for i in "${cfgs[@]}"; do
     KV=(${i//=/ })
     SOURCE="$SH_SCRIPT_DIR/${KV[0]}"
