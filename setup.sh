@@ -54,7 +54,7 @@ fi
 #
 answer=$(yes_no "Do you want to install shell sources?")
 if [ "y" == "$answer" ]; then
-  IFS=' ' read -a cfgs <<< $(grep -vE "^\s*#.*$" "$LN_DIR/sync.conf")
+  IFS=' ' read -a cfgs <<< $(grep -vE "^\s*#.*$" "$SH_SCRIPT_DIR/sync.conf")
   for i in "${cfgs[@]}"; do
     KV=(${i//=/ })
     SOURCE="$SH_SCRIPT_DIR/${KV[0]}"
