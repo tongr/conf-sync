@@ -19,7 +19,7 @@ read_input () {
 
 # repository set up
 # set default repo to:
-REPO="https://github.com/conf-sync/conf-sync.git"
+REPO="https://github.com/tongr/conf-sync.git"
 if [ ! -z $1 ]
 then
   echo "setting repository URL to $1"
