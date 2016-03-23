@@ -1,4 +1,4 @@
-\# enable color support of ls and also add handy aliases
+# enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
   test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
   alias ls='ls --color=auto'
@@ -30,7 +30,6 @@ pidgrep() { psgrep "$*" | awk '{print $2}'; }
 pidgrepa() { psgrepa "$*" | awk '{print $2}'; }
 alias pidg="pidgrep"
 
-
 # zip and unzip with progress indicator
 tgz() { tar -cf - $@ | pv -s $(wc -c $@ | tail -n1 | awk '{print $1}') |  gzip; }
 tgzfast() { tar -cf - $@ | pv -s $(wc -c $@ | tail -n1 | awk '{print $1}') |  gzip --fast; }
@@ -57,7 +56,7 @@ untgz() {
 # ssh shortcuts
 #
 # open ssh session and start tmux remotely
-ssh_tmux() {
+sshtmux() {
   if [ -z "$1" ]; then
     >&2 echo "SSH host missing!"
     return 1
@@ -69,7 +68,8 @@ ssh_tmux() {
       # internal command to provide autocompletion
       ssh -t $1 "tmux ls" 2> /dev/null | awk -F":" 'BEGIN{printf "ls"}{printf " "$1}'
     else
-#      echo ssh -t $1 "tmux attach -d -t ${@:2} || tmux new -s ${@:2}"
+      # debug:
+      #echo ssh -t $1 "tmux attach -d -t ${@:2} || tmux new -s ${@:2}"
       ssh -t $1 "tmux attach -d -t ${@:2}  2> /dev/null || tmux new -s ${@:2}"
     fi
   else
@@ -78,8 +78,8 @@ ssh_tmux() {
 }
 
 # define an alias for each host in the ~/.ssh/config
-eval $(awk '$1=="Host" {print "alias " $2 "=\47ssh_tmux " $2 "\47;" }' $HOME/.ssh/config)
-# enable auto completion for this alias (continue ssh_tmux sessions)
+eval $(awk '$1=="Host" {print "alias " $2 "=\47sshtmux " $2 "\47;" }' $HOME/.ssh/config)
+# enable auto completion for this alias (continue sshtmux sessions)
 eval $(awk '$1=="Host" {print "_" $2 "() { local cur opts; cur=\"${COMP_WORDS[COMP_CWORD]}\";opts=\"$(" $2 " lsopts)\";COMPREPLY=($(compgen -W \"${opts}\" -- ${cur}) ); return 0; }; complete -F _" $2 " " $2 "; " }' $HOME/.ssh/config)
 
 # proxy for tunneled localhost connections
@@ -92,7 +92,8 @@ sshproxy() {
   local HOST=$1
   local PORT=${3:-56423}
   local PROXY_PID=`pidgrep "ssh -f -qTnN -D $PORT $HOST"`
-  echo pidgrep "ssh -f -qTnN -D $PORT $HOST"
+  # debug:
+  #echo pidgrep "ssh -f -qTnN -D $PORT $HOST"
   if [ "$#" -gt "1" ]; then
     if [ "$2" == "open" ]; then
       if [ "$PROXY_PID" != "" ]; then
@@ -119,6 +120,7 @@ sshproxy() {
     fi
   fi
 }
+
 #kill `pidgrep 'ssh -f -qTnN -D 56423'`
 _sshproxy() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -gt "1" ]; then COMPREPLY=($(compgen -W "open close" -- ${cur}) ); return 0; fi; COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); return 0; }
 complete -F _sshproxy sshproxy
