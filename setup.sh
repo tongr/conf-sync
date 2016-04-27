@@ -76,4 +76,53 @@ if [ "y" == "$answer" ]; then
   done
 fi
 
+#
+# setup shell scripts
+#
+# install git-latexdiff
+install-git-latexdiff() {
+  echo "Installing git-latexdiff ..."
+  if [ ! -d "$HOME/bin/git-latexdiff" ] ; then
+    if [ ! -d "$HOME/opt" ] ; then
+      mkdir "$HOME/opt"
+    fi
+    if [ ! -d "$HOME/bin" ] ; then
+     mkdir "$HOME/bin"
+    fi
+    cd "$HOME/opt"
+    if [ ! -d "$HOME/opt/git-latexdiff" ] ; then
+      git clone https://gitlab.com/git-latexdiff/git-latexdiff.git --depth=1
+      # install latexdiff
+      if [ ! -d "$HOME/opt/git-latexdiff/latexdiff" ] ; then
+        wget -qO- -O /tmp/latexdiff.zip http://mirrors.ctan.org/support/latexdiff.zip && unzip /tmp/latexdiff.zip -d "$HOME/opt/git-latexdiff" && rm /tmp/latexdiff.zip
+      fi
+    fi
+    if [ ! -e "$HOME/bin/latexdiff" ] ; then
+      ln -s "$HOME/opt/git-latexdiff/latexdiff/latexdiff" "$HOME/bin/latexdiff"
+    fi
+    if [ ! -e "$HOME/bin/git-latexdiff" ] ; then
+      ln -s "$HOME/opt/git-latexdiff/git-latexdiff" "$HOME/bin/git-latexdiff"
+    fi
+  fi
+  echo "done!"
+  echo "Example usage:"
+  echo "git latexdiff --main .git latexdiff --main main.tex --output ./diff.pdf --bibtex HEAD~1 && evince diff.pdf"
+}
+# install bash-git-prompt
+function install-bash-git-prompt() {
+  echo "Installing git-latexdiff ..."
+  if [ ! -d "$HOME/opt/bash-git-prompt" ] ; then
+    mkdir -p "$HOME/opt"
+    git clone https://github.com/magicmonty/bash-git-prompt.git "$HOME/opt/bash-git-prompt" --depth=1
+  fi
+  echo "done!"
+}
+answer=$(yes_no "Do you want to install additional software utilities?")
+if [ "y" == "$answer" ]; then
+  answer=$(yes_no "Do you want to install git-latexdiff?")
+  install-git-latexdiff
+  answer=$(yes_no "Do you want to install bash-git-prompt?")
+  install-bash-git-prompt
+fi
+
 echo "Setup finished!"

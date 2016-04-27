@@ -12,3 +12,9 @@ fi
 if [ -e "$HOME/.Xmodmap" ] ; then
     xmodmap "$HOME/.Xmodmap"
 fi
+
+# activate bash-git-prompt if installed (in ~/opt/bash-git-prompt)
+if [ -e "$HOME/opt/bash-git-prompt/gitprompt.sh" ] ; then
+  source "$HOME/opt/bash-git-prompt/gitprompt.sh"
+  GIT_PROMPT_ONLY_IN_REPO=1
+fi
