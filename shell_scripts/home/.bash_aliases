@@ -127,3 +127,52 @@ sshproxy() {
 #kill `pidgrep 'ssh -f -qTnN -D 56423'`
 _sshproxy() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -gt "1" ]; then COMPREPLY=($(compgen -W "open close" -- ${cur}) ); return 0; fi; COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); return 0; }
 complete -F _sshproxy sshproxy
+
+
+tunnel() {
+  if [ "$#" -le "1" ]; then
+    >&2 echo "Error: host(s) missing"'!';
+    >&2 echo "USAGE: $FUNCNAME TUNNEL_HOST REMOTE_HOST";
+    return 1;
+  fi
+  # get parameters
+  tunnel_host="$1"
+  remote_host="$2"
+  #
+  while true ; do
+    let "lport = $RANDOM % 10000 + 50000"
+    if [ "0" -lt "$( netstat -tlpn 2> /dev/null | grep ":$lport " | wc -l )" ]; then
+      # port not free
+      echo "port $lport not free"
+    else
+      echo "free port found: $lport"
+      break
+    fi
+  done
+  # get remote host configs
+  rhost="$(ssh -G $remote_host | grep '^hostname ' | cut -d' ' -f2)"
+  rport="$(ssh -G $remote_host | grep '^port ' | cut -d' ' -f2)"
+  ruser="$(ssh -G $remote_host | grep '^user ' | cut -d' ' -f2)"
+  # get first existing identity file
+  ridentityfile="$(ssh -G $remote_host | grep '^identityfile ' | cut -d' ' -f2 | while read line ; do
+    # eval path (i.e., ~/...)
+    file=$(eval echo $line)
+    if [ -e "$file" ] ; then
+      echo "$file"
+      break
+    fi
+  done)"
+  # open tunnel
+  ssh -f $tunnel_host -L "$lport:$rhost:$rport" -N
+  # remote connection via tunnel
+  if [ -n "$ridentityfile" ] ; then
+    ssh -i $ridentityfile -p "$lport" -t "$ruser@localhost" 'tmux attach -d  2> /dev/null || tmux new'
+  else
+    ssh -p "$lport" -t "$ruser@localhost" 'tmux attach -d  2> /dev/null || tmux new'
+  fi
+  echo "trying to close tunnel to $tunnel_host from local port $lport of process  $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N") ..."
+  kill $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N")
+}
+_tunnel() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; return 0; }
+complete -F _tunnel tunnel
+
