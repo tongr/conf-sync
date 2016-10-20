@@ -120,9 +120,13 @@ function install-bash-git-prompt() {
 answer=$(yes_no "Do you want to install additional software utilities?")
 if [ "y" == "$answer" ]; then
   answer=$(yes_no "Do you want to install git-latexdiff?")
-  install-git-latexdiff
+  if [ "y" == "$answer" ]; then
+    install-git-latexdiff
+  fi
   answer=$(yes_no "Do you want to install bash-git-prompt?")
-  install-bash-git-prompt
+  if [ "y" == "$answer" ]; then
+    install-bash-git-prompt
+  fi
 fi
 
 echo "Setup finished!"
