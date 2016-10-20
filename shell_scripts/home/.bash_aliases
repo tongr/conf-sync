@@ -17,6 +17,9 @@ alias cd...='cd ../..'
 alias cd....='cd ../../..'
 alias cd.....='cd ../../../..'
 
+# unmount all network shares
+alias umount-all-cfis="sudo umount -a -t cifs -l"
+
 # cleanup swap
 alias unswap='sudo sh -c "swapoff -a; swapon -a; echo done!"'
 
@@ -127,7 +130,6 @@ sshproxy() {
 #kill `pidgrep 'ssh -f -qTnN -D 56423'`
 _sshproxy() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -gt "1" ]; then COMPREPLY=($(compgen -W "open close" -- ${cur}) ); return 0; fi; COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); return 0; }
 complete -F _sshproxy sshproxy
-
 
 tunnel() {
   if [ "$#" -le "1" ]; then
