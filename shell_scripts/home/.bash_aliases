@@ -178,3 +178,32 @@ tunnel() {
 _tunnel() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; return 0; }
 complete -F _tunnel tunnel
 
+# opening a sinlge port to a ssh host (same local port than on the remote machine)
+tunnel_port() {
+  if [ "$#" -lt "1" ]; then
+    >&2 echo "Error: port (and host) missing"'!';
+    >&2 echo "USAGE: $FUNCNAME TARGET_PORT [TARGET_HOST]";
+    return 1;
+  fi
+
+  # get parameters
+  local port="$1"
+  local host="$2"
+  local PROXY_PID=`pidgrep ssh -f -N -L $port:localhost:$port`
+  if [ "$PROXY_PID" != "" ]; then
+    echo "closing tunneled port $port (killing \"$(psgrep "ssh -f -N -L $port:localhost:$port" | cut -c66-)\") ..."
+    kill $PROXY_PID
+  else
+    if [ "$#" -le "1" ]; then
+      >&2 echo "Error: host missing to create a connection"'!';
+      >&2 echo "USAGE: $FUNCNAME TARGET_PORT TARGET_HOST";
+      return 1;
+    fi
+
+    echo "opening port $port to $host ..."
+    ssh -f -N -L "$port:localhost:$port" isfet
+  fi
+}
+_tunnel_port() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -eq "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; return 0; }
+complete -F _tunnel_port tunnel_port
+
