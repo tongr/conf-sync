@@ -127,6 +127,9 @@ sshproxy() {
   fi
 }
 
+# calculate a server port number (5____) given a host name (param $1)
+function server_port { printf "5%-4s%s\n" "$(echo $((0x$(echo -n $1 | md5sum | cut -f1 -d' '))) | cut -c2-5)" | tr ' ' '0'; }
+
 #kill `pidgrep 'ssh -f -qTnN -D 56423'`
 _sshproxy() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -gt "1" ]; then COMPREPLY=($(compgen -W "open close" -- ${cur}) ); return 0; fi; COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); return 0; }
 complete -F _sshproxy sshproxy
@@ -140,17 +143,27 @@ tunnel() {
   # get parameters
   tunnel_host="$1"
   remote_host="$2"
-  #
-  while true ; do
-    let "lport = $RANDOM % 10000 + 50000"
-    if [ "0" -lt "$( netstat -tlpn 2> /dev/null | grep ":$lport " | wc -l )" ]; then
-      # port not free
-      echo "port $lport not free"
-    else
-      echo "free port found: $lport"
-      break
-    fi
-  done
+  # use always the same port for one remote host?
+  lport=`server_port $remote_host`
+  if [ "0" -lt "$( netstat -tlpn 2> /dev/null | grep ":$lport " | wc -l )" ]; then
+    # port not free
+    echo "port $lport not free"
+    >&2 echo "Error: port $lport not free"'!';
+    return 1;
+  else
+    echo "free port to connect to $remote_host found: $lport"
+  fi
+  # pick a random port
+  #while true ; do
+  #  let "lport = $RANDOM % 10000 + 50000"
+  #  if [ "0" -lt "$( netstat -tlpn 2> /dev/null | grep ":$lport " | wc -l )" ]; then
+  #    # port not free
+  #    echo "port $lport not free"
+  #  else
+  #    echo "free port found: $lport"
+  #    break
+  #  fi
+  #done
   # get remote host configs
   rhost="$(ssh -G $remote_host | grep '^hostname ' | cut -d' ' -f2)"
   rport="$(ssh -G $remote_host | grep '^port ' | cut -d' ' -f2)"
@@ -172,7 +185,7 @@ tunnel() {
   else
     ssh -p "$lport" -t "$ruser@localhost" 'tmux attach -d  2> /dev/null || tmux new'
   fi
-  echo "trying to close tunnel to $tunnel_host from local port $lport of process  $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N") ..."
+  echo "trying to close tunnel to $tunnel_host from local port $lport of process $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N") ..."
   kill $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N")
 }
 _tunnel() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; return 0; }
