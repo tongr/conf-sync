@@ -134,7 +134,7 @@ function server_port { printf "5%-4s%s\n" "$(echo $((0x$(echo -n $1 | md5sum | c
 _sshproxy() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -gt "1" ]; then COMPREPLY=($(compgen -W "open close" -- ${cur}) ); return 0; fi; COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); return 0; }
 complete -F _sshproxy sshproxy
 
-tunnel() {
+tunnel_ssh() {
   if [ "$#" -le "1" ]; then
     >&2 echo "Error: host(s) missing"'!';
     >&2 echo "USAGE: $FUNCNAME TUNNEL_HOST REMOTE_HOST";
@@ -188,8 +188,8 @@ tunnel() {
   echo "trying to close tunnel to $tunnel_host from local port $lport of process $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N") ..."
   kill $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N")
 }
-_tunnel() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; return 0; }
-complete -F _tunnel tunnel
+_tunnel_ssh() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; return 0; }
+complete -F _tunnel_ssh tunnel_ssh
 
 # opening a sinlge port to a ssh host (same local port than on the remote machine)
 tunnel_port() {
