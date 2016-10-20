@@ -87,7 +87,7 @@ sshtmux() {
 if [ -e "$HOME/.ssh/config" ] ; then
   eval $(awk '$1=="Host" {print "alias " $2 "=\47sshtmux " $2 "\47;" }' $HOME/.ssh/config)
   # enable auto completion for this alias (continue sshtmux sessions)
-  eval $(awk '$1=="Host" {print "_" $2 "() { local cur opts; cur=\"${COMP_WORDS[COMP_CWORD]}\";opts=\"$(" $2 " lsopts)\";COMPREPLY=($(compgen -W \"${opts}\" -- ${cur}) ); return 0; }; complete -F _" $2 " " $2 "; " }' $HOME/.ssh/config)  
+  eval $(awk '$1=="Host" {print "_" $2 "() { local cur opts; cur=\"${COMP_WORDS[COMP_CWORD]}\";opts=\"$(" $2 " lsopts)\";COMPREPLY=($(compgen -W \"${opts}\" -- ${cur}) ); return 0; }; complete -F _" $2 " " $2 "; " }' $HOME/.ssh/config)
 fi
 
 # proxy for tunneled localhost connections
