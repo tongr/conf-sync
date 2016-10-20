@@ -10,7 +10,8 @@ fi
 
 # load user-defined keyboard mapping
 if [ -e "$HOME/.Xmodmap" ] ; then
-    xmodmap "$HOME/.Xmodmap"
+    # check if xmodmap is available
+    command -v xmodmap >/dev/null 2>&1 && xmodmap "$HOME/.Xmodmap"
 fi
 
 # activate bash-git-prompt if installed (in ~/opt/bash-git-prompt)
