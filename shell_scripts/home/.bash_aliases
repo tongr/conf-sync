@@ -139,6 +139,54 @@ complete -F _sshproxy sshproxy
 # calculate a server port number (5____) given a host name (param $1)
 function server_port { printf "5%-4s%s\n" "$(echo $((0x$(echo -n $1 | md5sum | cut -f1 -d' '))) | cut -c2-5)" | tr ' ' '0'; }
 
+tunnel_host() {
+  if [ "$#" -lt "2" ]; then
+    >&2 echo "Error: host(s) missing"'!';
+    >&2 echo "USAGE: $FUNCNAME TUNNEL_HOST REMOTE_HOST [open|close]";
+    return 1;
+  fi
+  # get parameters
+  tunnel_host="$1"
+  remote_host="$2"
+  # use always the same port for one remote host?
+  lport=`server_port $remote_host`
+  if [ "$#" -lt "3" ]; then
+    if [ "0" -lt "$( netstat -tlpn 2> /dev/null | grep ":$lport " | wc -l )" ]; then
+      # port not free
+      echo "port $lport not free"
+      echo "Open connection found, try: $FUNCNAME $tunnel_host $remote_host close"
+      return 1;
+    else
+      echo "free port to connect to $remote_host found: $lport"
+      echo "Open connection found, try: $FUNCNAME $tunnel_host $remote_host open"
+    fi
+  else
+    # get remote host configs
+    rhost="$(ssh -G $remote_host | grep '^hostname ' | cut -d' ' -f2)"
+    rport="$(ssh -G $remote_host | grep '^port ' | cut -d' ' -f2)"
+    ruser="$(ssh -G $remote_host | grep '^user ' | cut -d' ' -f2)"
+    # get first existing identity file
+    ridentityfile="$(ssh -G $remote_host | grep '^identityfile ' | cut -d' ' -f2 | while read line ; do
+      # eval path (i.e., ~/...)
+      file=$(eval echo $line)
+      if [ -e "$file" ] ; then
+        echo "$file"
+        break
+      fi
+    done)"
+    if [ "$3" == "open" ]; then
+      # open tunnel
+      echo "opening tunnel to $remote_host from local port $lport via $tunnel_host ..."
+      ssh -f $tunnel_host -L "$lport:$rhost:$rport" -N
+    else
+      echo "trying to close tunnel to $tunnel_host from local port $lport of process $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N") ..."
+      kill $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N")
+    fi
+  fi
+}
+_tunnel_host() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "4" ]; then COMPREPLY=($(compgen -W "open close" -- ${cur}) ); fi; return 0; }
+complete -F _tunnel_host tunnel_host
+
 tunnel_ssh() {
   if [ "$#" -le "1" ]; then
     >&2 echo "Error: host(s) missing"'!';
