@@ -132,12 +132,12 @@ sshproxy() {
   fi
 }
 
-# calculate a server port number (5____) given a host name (param $1)
-function server_port { printf "5%-4s%s\n" "$(echo $((0x$(echo -n $1 | md5sum | cut -f1 -d' '))) | cut -c2-5)" | tr ' ' '0'; }
-
 #kill `pidgrep 'ssh -f -qTnN -D 56423'`
 _sshproxy() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -gt "1" ]; then COMPREPLY=($(compgen -W "open close" -- ${cur}) ); return 0; fi; COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); return 0; }
 complete -F _sshproxy sshproxy
+
+# calculate a server port number (5____) given a host name (param $1)
+function server_port { printf "5%-4s%s\n" "$(echo $((0x$(echo -n $1 | md5sum | cut -f1 -d' '))) | cut -c2-5)" | tr ' ' '0'; }
 
 tunnel_ssh() {
   if [ "$#" -le "1" ]; then
