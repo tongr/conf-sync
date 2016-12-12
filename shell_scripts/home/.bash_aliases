@@ -139,52 +139,100 @@ complete -F _sshproxy sshproxy
 # calculate a server port number (5____) given a host name (param $1)
 function server_port { printf "5%-4s%s\n" "$(echo $((0x$(echo -n $1 | md5sum | cut -f1 -d' '))) | cut -c2-5)" | tr ' ' '0'; }
 
+# create an entry for the tunneled connection to a server in .ssh/config
+# --> read the config, change hostname ($1) to "__host" HostName to "127.0.0.1" port to ```server_port $1``` and write the entry
+add_tunneled_host() {
+  local orig_host=$1
+  local start_line=""
+  local end_line=""
+  local config_file='.ssh/config'
+  for hostline in $(grep -n '^Host[[:space:]]*' $config_file | sed 's/Host[[:space:]]*//'); do
+    local host="$(echo $hostline | cut -f2 -d':')"
+    if [[ "__${orig_host}" == "$host" ]]; then
+      >&2 echo "Error: Tunneled host already exists"'!'
+      return 1;
+    elif [[ "$orig_host" == "$host" ]]; then
+      start_line="$(echo $hostline | cut -f1 -d':')"
+      end_line=""
+    elif [[ -n "$start_line" && -z "$end_line" ]]; then
+      end_line="$(echo $hostline | cut -f1 -d':')"
+    fi
+  done
+  if [[ -z "$start_line" && -z "$end_line" ]]; then
+      >&2 echo "Error: No config for ${orig_host} found"'!'
+     return 1;
+  fi
+  echo "Creating tunneled host based on: $orig_host (line ${start_line} -- ${end_line} in ${config_file})"
+  echo "" >> $config_file
+  echo "Host __${orig_host}" >> $config_file
+  echo "    HostName 127.0.0.1" >> $config_file
+  echo "    Port $(server_port ${orig_host})" >> $config_file
+  head "-$(echo "$end_line-1" | bc)" $config_file | tail "-$(echo "$end_line-$start_line" | bc)" | grep -v "^Host[[:space:]]*\|^[[:space:]]*HostName[[:space:]]*\|^[[:space:]]*Port[[:space:]]*" >> $config_file
+}
+
+# open or close a tunnel to a specific remote host
 tunnel_host() {
-  if [ "$#" -lt "2" ]; then
+  if [ "$#" -lt "1" ]; then
     >&2 echo "Error: host(s) missing"'!';
-    >&2 echo "USAGE: $FUNCNAME TUNNEL_HOST REMOTE_HOST [open|close]";
+    >&2 echo "USAGE: $FUNCNAME REMOTE_HOST TUNNEL_HOST|close";
     return 1;
   fi
   # get parameters
-  tunnel_host="$1"
-  remote_host="$2"
+  local remote_host="$1"
   # use always the same port for one remote host?
-  lport=`server_port $remote_host`
-  if [ "$#" -lt "3" ]; then
-    if [ "0" -lt "$( netstat -tlpn 2> /dev/null | grep ":$lport " | wc -l )" ]; then
+  local lport=`server_port $remote_host`
+  local open_connections="$( netstat -tlpn 2> /dev/null | grep ":$lport " | wc -l )"
+  if [ "$#" -lt "2" ]; then
+    if [ "0" -lt $open_connections ]; then
       # port not free
-      echo "port $lport not free"
-      echo "Open connection found, try: $FUNCNAME $tunnel_host $remote_host close"
+      >&2 echo "Open connection found (port $lport not free)"
+      >&2 echo "Try closing: $FUNCNAME $remote_host close"
       return 1;
     else
-      echo "free port to connect to $remote_host found: $lport"
-      echo "Open connection found, try: $FUNCNAME $tunnel_host $remote_host open"
+      >&2 echo "Free port for the connect to $remote_host found: $lport"
+      >&2 echo "Open connection using: $FUNCNAME $remote_host TUNNEL_HOST"
+      return 1;
     fi
   else
     # get remote host configs
-    rhost="$(ssh -G $remote_host | grep '^hostname ' | cut -d' ' -f2)"
-    rport="$(ssh -G $remote_host | grep '^port ' | cut -d' ' -f2)"
-    ruser="$(ssh -G $remote_host | grep '^user ' | cut -d' ' -f2)"
-    # get first existing identity file
-    ridentityfile="$(ssh -G $remote_host | grep '^identityfile ' | cut -d' ' -f2 | while read line ; do
-      # eval path (i.e., ~/...)
-      file=$(eval echo $line)
-      if [ -e "$file" ] ; then
-        echo "$file"
-        break
+    local rhost="$(ssh -G $remote_host | grep '^hostname ' | cut -d' ' -f2)"
+    local rport="$(ssh -G $remote_host | grep '^port ' | cut -d' ' -f2)"
+    if [ "$2" == "close" ]; then
+      if [ "0" -eq $open_connections ]; then
+        >&2 echo "No open connection found (port $lport is free), cannot close a connection!"
+        return 1;
       fi
-    done)"
-    if [ "$3" == "open" ]; then
+
+      echo "Trying to close tunnel to $remote_host from local port $lport of process $(pidgrep "ssh -f .* -L "$lport:$rhost:$rport" -N") ..."
+      kill $(pidgrep "ssh -f .* -L "$lport:$rhost:$rport" -N")
+    else
+      if [ "0" -lt $open_connections ]; then
+        >&2 echo "Open connection found (port $lport not free), try to close the connection first: $FUNCNAME $remote_host close"
+        return 1;
+      fi
+      local tunnel_host="$2"
       # open tunnel
       echo "opening tunnel to $remote_host from local port $lport via $tunnel_host ..."
-      ssh -f $tunnel_host -L "$lport:$rhost:$rport" -N
-    else
-      echo "trying to close tunnel to $tunnel_host from local port $lport of process $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N") ..."
-      kill $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N")
+      ssh -f $tunnel_host -L "$lport:$rhost:$rport" -N || ( >&2 echo "Error! Unable to connect!" && return 1 )
+      echo "Tunnel opened!"
+
+      # check local config:
+      local configport="$(ssh -G __${remote_host} | grep '^port ' | cut -d' ' -f2)"
+      if [[ "$configport" != "$lport" && "$configport" == "22" ]]; then
+        echo "Invalid tunneled host config for __${remote_host}! Trying to fix the issue ..."
+        add_tunneled_host $remote_host
+      fi
+      configport="$(ssh -G __${remote_host} | grep '^port ' | cut -d' ' -f2)"
+      if [[ "$configport" == "$lport" ]]; then
+        echo "Tunneled connection enabled via host: __${remote_host}"
+      else
+        >&2 echo "Error! Please try to update tunneled host config __${remote_host} to port $configport (see ssh config)"
+        return 1
+      fi
     fi
   fi
 }
-_tunnel_host() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "4" ]; then COMPREPLY=($(compgen -W "open close" -- ${cur}) ); fi; return 0; }
+_tunnel_host() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "close $(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) );  fi; return 0; }
 complete -F _tunnel_host tunnel_host
 
 tunnel_ssh() {
