@@ -19,6 +19,7 @@ fi
 
 # activate bash-git-prompt if installed (in ~/opt/bash-git-prompt)
 if [ -e "$HOME/opt/bash-git-prompt/gitprompt.sh" ] ; then
+  GIT_PROMPT_ONLY_IN_REPO=0
+  GIT_PROMPT_THEME=TruncatedPwd_WindowTitle_Ubuntu
   source "$HOME/opt/bash-git-prompt/gitprompt.sh"
-  GIT_PROMPT_ONLY_IN_REPO=1
 fi
