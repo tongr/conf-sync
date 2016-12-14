@@ -87,7 +87,7 @@ sshtmux() {
 }
 
 # define an alias for each host in the ~/.ssh/config
-if [ -e "$HOME/.ssh/config" ] ; then
+if [ -f "$HOME/.ssh/config" ] ; then
   eval $(awk '$1=="Host" {print "alias " $2 "=\47sshtmux " $2 "\47;" }' $HOME/.ssh/config)
   # enable auto completion for this alias (continue sshtmux sessions)
   eval $(awk '$1=="Host" {print "_" $2 "() { local cur opts; cur=\"${COMP_WORDS[COMP_CWORD]}\";opts=\"$(" $2 " lsopts)\";COMPREPLY=($(compgen -W \"${opts}\" -- ${cur}) ); return 0; }; complete -F _" $2 " " $2 "; " }' $HOME/.ssh/config)
@@ -146,11 +146,14 @@ add_tunneled_host() {
   local start_line=""
   local end_line=""
   local config_file='.ssh/config'
+  if [ ! -f "$HOME/.ssh/config" ] ; then
+    return 1
+  fi
   for hostline in $(grep -n '^Host[[:space:]]*' $config_file | sed 's/Host[[:space:]]*//'); do
     local host="$(echo $hostline | cut -f2 -d':')"
     if [[ "__${orig_host}" == "$host" ]]; then
       >&2 echo "Error: Tunneled host already exists"'!'
-      return 1;
+      return 1
     elif [[ "$orig_host" == "$host" ]]; then
       start_line="$(echo $hostline | cut -f1 -d':')"
       end_line=""
@@ -160,7 +163,7 @@ add_tunneled_host() {
   done
   if [[ -z "$start_line" && -z "$end_line" ]]; then
       >&2 echo "Error: No config for ${orig_host} found"'!'
-     return 1;
+     return 1
   fi
   echo "Creating tunneled host based on: $orig_host (line ${start_line} -- ${end_line} in ${config_file})"
   echo "" >> $config_file
@@ -200,7 +203,7 @@ tunnel_host() {
     if [[ "$2" == "close" ]]; then
       if [[ "0" -eq "$open_connections" ]]; then
         >&2 echo "No open connection found (port $lport is free), cannot close a connection!"
-        return 1;
+        return 1
       fi
 
       echo "Trying to close tunnel to $remote_host from local port $lport of process $(pidgrep "ssh -f .* -L "$lport:$rhost:$rport" -N") ..."
@@ -208,7 +211,7 @@ tunnel_host() {
     else
       if [[ "0" -lt "$open_connections" ]]; then
         >&2 echo "Open connection found (port $lport not free), try to close the connection first: $FUNCNAME $remote_host close"
-        return 1;
+        return 1
       fi
       local tunnel_host="$2"
       # open tunnel
@@ -230,7 +233,7 @@ tunnel_host() {
       if [[ "$configport" == "$lport" ]]; then
         echo "Tunneled connection enabled via host: __${remote_host}"
       else
-        >&2 echo "Error! Please try to update tunneled host config __${remote_host} to port $configport (see ssh config)"
+        >&2 echo "Error! Please try to update tunneled host config __${remote_host} from port $configport to $lport (see ssh config)"
         return 1
       fi
     fi
