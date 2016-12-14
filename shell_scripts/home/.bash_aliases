@@ -182,8 +182,8 @@ tunnel_host() {
   # use always the same port for one remote host?
   local lport=`server_port $remote_host`
   local open_connections="$( netstat -tlpn 2> /dev/null | grep ":$lport " | wc -l )"
-  if [ "$#" -lt "2" ]; then
-    if [ "0" -lt $open_connections ]; then
+  if [[ "$#" -lt "2" ]]; then
+    if [[ "0" -lt "$open_connections" ]]; then
       # port not free
       >&2 echo "Open connection found (port $lport not free)"
       >&2 echo "Try closing: $FUNCNAME $remote_host close"
@@ -197,8 +197,8 @@ tunnel_host() {
     # get remote host configs
     local rhost="$(ssh -G $remote_host | grep '^hostname ' | cut -d' ' -f2)"
     local rport="$(ssh -G $remote_host | grep '^port ' | cut -d' ' -f2)"
-    if [ "$2" == "close" ]; then
-      if [ "0" -eq $open_connections ]; then
+    if [[ "$2" == "close" ]]; then
+      if [[ "0" -eq "$open_connections" ]]; then
         >&2 echo "No open connection found (port $lport is free), cannot close a connection!"
         return 1;
       fi
@@ -206,14 +206,18 @@ tunnel_host() {
       echo "Trying to close tunnel to $remote_host from local port $lport of process $(pidgrep "ssh -f .* -L "$lport:$rhost:$rport" -N") ..."
       kill $(pidgrep "ssh -f .* -L "$lport:$rhost:$rport" -N")
     else
-      if [ "0" -lt $open_connections ]; then
+      if [[ "0" -lt "$open_connections" ]]; then
         >&2 echo "Open connection found (port $lport not free), try to close the connection first: $FUNCNAME $remote_host close"
         return 1;
       fi
       local tunnel_host="$2"
       # open tunnel
-      echo "opening tunnel to $remote_host from local port $lport via $tunnel_host ..."
-      ssh -f $tunnel_host -L "$lport:$rhost:$rport" -N || ( >&2 echo "Error! Unable to connect!" && return 1 )
+      echo "Opening tunnel to $remote_host from local port $lport via $tunnel_host ..."
+      ssh -f $tunnel_host -L "$lport:$rhost:$rport" -N || local ssh_error=1
+      if [[ -n "$ssh_error" ]]; then 
+        >&2 echo "Error! Unable to connect!"
+        return 1
+      fi
       echo "Tunnel opened!"
 
       # check local config:
