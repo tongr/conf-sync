@@ -133,7 +133,7 @@ sshproxy() {
 }
 
 #kill `pidgrep 'ssh -f -qTnN -D 56423'`
-_sshproxy() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -gt "1" ]; then COMPREPLY=($(compgen -W "open close" -- ${cur}) ); return 0; fi; COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); return 0; }
+_sshproxy() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -gt "1" ]; then COMPREPLY=($(compgen -W "open close" -- ${cur}) ); return 0; fi; if [ -f "$HOME/.ssh/config" ] ; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; return 0; }
 complete -F _sshproxy sshproxy
 
 # calculate a server port number (5____) given a host name (param $1)
@@ -239,7 +239,7 @@ tunnel_host() {
     fi
   fi
 }
-_tunnel_host() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "close $(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) );  fi; return 0; }
+_tunnel_host() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ -f "$HOME/.ssh/config" ] ; then if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "close $(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) );  fi; fi; return 0; }
 complete -F _tunnel_host tunnel_host
 
 tunnel_ssh() {
@@ -296,7 +296,7 @@ tunnel_ssh() {
   echo "trying to close tunnel to $tunnel_host from local port $lport of process $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N") ..."
   kill $(pidgrep "ssh -f $1 -L "$lport:$rhost:$rport" -N")
 }
-_tunnel_ssh() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; return 0; }
+_tunnel_ssh() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ -f "$HOME/.ssh/config" ] ; then if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; fi; return 0; }
 complete -F _tunnel_ssh tunnel_ssh
 
 # opening a sinlge port to a ssh host (same local port than on the remote machine)
@@ -325,6 +325,6 @@ tunnel_port() {
     ssh -f -N -L "$port:localhost:$port" isfet
   fi
 }
-_tunnel_port() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -eq "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; return 0; }
+_tunnel_port() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ -f "$HOME/.ssh/config" ] ; then if [ "$COMP_CWORD" -eq "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; fi; return 0; }
 complete -F _tunnel_port tunnel_port
 
