@@ -322,7 +322,7 @@ tunnel_port() {
     fi
 
     echo "opening port $port to $host ..."
-    ssh -f -N -L "$port:localhost:$port" isfet
+    ssh -f -N -L "$port:localhost:$port" $host
   fi
 }
 _tunnel_port() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ -f "$HOME/.ssh/config" ] ; then if [ "$COMP_CWORD" -eq "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; fi; return 0; }
