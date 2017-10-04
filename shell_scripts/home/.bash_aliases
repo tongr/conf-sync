@@ -39,6 +39,24 @@ pidgrep() { psgrep "$*" | awk '{print $2}'; }
 pidgrepa() { psgrepa "$*" | awk '{print $2}'; }
 alias pidg="pidgrep"
 
+#
+# fixes for annoying ubuntu problems
+#
+# restart network manager in case of wifi problems after suspend
+alias restart-network-manager="sudo service network-manager restart"
+
+# try to list old linux images to free stpace in /boot (ubuntu issue)
+purge_linux_images() {
+  echo "avaliable images:"
+  dpkg -l | grep linux-image
+  echo
+  echo "cleanup using:"
+  for img in $(dpkg -l | grep linux-image | awk '$1=$1' | cut -d' ' -f2 | grep -v extra | sort | head -n-2); do
+    echo "sudo apt-get purge ${img}";
+  done
+}
+alias trim_boot="purge_linux_images"
+
 # zip and unzip with progress indicator
 tgz() { tar -cf - $@ | pv -s $(wc -c $@ | tail -n1 | awk '{print $1}') |  gzip; }
 tgzfast() { tar -cf - $@ | pv -s $(wc -c $@ | tail -n1 | awk '{print $1}') |  gzip --fast; }
