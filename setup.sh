@@ -110,10 +110,31 @@ install-git-latexdiff() {
 }
 # install bash-git-prompt
 function install-bash-git-prompt() {
-  echo "Installing git-latexdiff ..."
+  echo "Installing bash Git prompt ..."
   if [ ! -d "$HOME/opt/bash-git-prompt" ] ; then
     mkdir -p "$HOME/opt"
     git clone https://github.com/magicmonty/bash-git-prompt.git "$HOME/opt/bash-git-prompt" --depth=1
+  fi
+  echo "done!"
+}
+# install bash-it
+function install-bash-it() {
+  echo "Installing bash-it ..."
+  if [ ! -d "$HOME/bash-git-prompt" ] ; then
+    mkdir -p "$HOME/opt"
+    git clone --depth=1 https://github.com/Bash-it/bash-it.git "$HOME/opt/.bash_it"
+    bash "$HOME/opt/.bash_it/install.sh"
+    echo 'Setting up plugins and extension ...'
+    sed -i "s|^\(export BASH_IT_THEME=.*\)$|#\1\nexport BASH_IT_THEME='nwinkler'|" ~/.bashrc
+    bash -c 'bash-it enable completion todo tmux ssh pip pip3 maven git_flow git_flow_avh git docker export dirs conda awscli'
+    bash -c 'bash-it enable plugin xterm z_autoenv todo tmux tmuxinator ssh sshagent java history git extract explain docker dirs browser boot2docker battery aws autojump'
+    bash -c 'bash-it enable alias git todo.txt-cli vagrant curl clipboard apt'
+
+    answer=$(yes_no "Do you want to try installing fasd?")
+    if [ "y" == "$answer" ]; then
+      sudo -- bash -c 'add-apt-repository ppa:aacebedo/fasd; apt-get update; apt-get install fasd'
+      bash -c 'bash-it enable plugin fasd'
+    fi
   fi
   echo "done!"
 }
@@ -123,9 +144,15 @@ if [ "y" == "$answer" ]; then
   if [ "y" == "$answer" ]; then
     install-git-latexdiff
   fi
-  answer=$(yes_no "Do you want to install bash-git-prompt?")
+  answer=$(yes_no "Do you want to install bash-it?")
   if [ "y" == "$answer" ]; then
-    install-bash-git-prompt
+    install-bash-it
+  else
+    # bash git prompt is contained in bash-it
+    answer=$(yes_no "Do you want to install bash-git-prompt?")
+    if [ "y" == "$answer" ]; then
+      install-bash-git-prompt
+    fi
   fi
 fi
 
