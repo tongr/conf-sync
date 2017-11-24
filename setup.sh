@@ -161,6 +161,12 @@ if [ "y" == "$answer" ]; then
   answer=$(yes_no "Do you want to install bash-it?")
   if [ "y" == "$answer" ]; then
     install-bash-it
+    # uninstall 'old' bash-git-prompt installations
+    if [ -e "$HOME/opt/bash-git-prompt/gitprompt.sh" ] ; then
+      mkdir -p "$HOME/opt/trash"
+      rm -rf "$HOME/opt/trash/bash-git-prompt"
+      mv "$HOME/opt/bash-git-prompt" "$HOME/opt/trash/"
+    fi
   else
     # bash git prompt is contained in bash-it
     answer=$(yes_no "Do you want to install bash-git-prompt?")
