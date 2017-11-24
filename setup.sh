@@ -122,18 +122,32 @@ function install-bash-it() {
   echo "Installing bash-it ..."
   if [ ! -d "$HOME/bash-git-prompt" ] ; then
     mkdir -p "$HOME/opt"
-    git clone --depth=1 https://github.com/Bash-it/bash-it.git "$HOME/opt/.bash_it"
-    bash "$HOME/opt/.bash_it/install.sh"
-    echo 'Setting up plugins and extension ...'
-    sed -i "s|^\(export BASH_IT_THEME=.*\)$|#\1\nexport BASH_IT_THEME='nwinkler'|" ~/.bashrc
-    bash -c 'bash-it enable completion todo tmux ssh pip pip3 maven git_flow git_flow_avh git docker export dirs conda awscli'
-    bash -c 'bash-it enable plugin xterm z_autoenv todo tmux tmuxinator ssh sshagent java history git extract explain docker dirs browser boot2docker battery aws autojump'
-    bash -c 'bash-it enable alias git todo.txt-cli vagrant curl clipboard apt'
+    if [ ! -d "$HOME/opt/.bash_it" ];then
+      git clone --depth=1 https://github.com/Bash-it/bash-it.git "$HOME/opt/.bash_it"
+    fi
+    if grep -q '^source "$BASH_IT"/bash_it.sh$' ~/.bashrc; then
+      echo "It seems the .bashrc file is already configured for bash-it." # You dont have to append bash-it templates at the end of .bashrc ...
+      answer=$(yes_no "Do you want to keep the existing configuration of bash-it?")
+      if [ "y" == "$answer" ]; then
+        bash "$HOME/opt/.bash_it/install.sh" "--no-modify-config"
+      else
+        bash "$HOME/opt/.bash_it/install.sh"
+        echo 'Setting up plugins and extension ...'
+        if grep -q "^export BASH_IT_THEME='nwinkler'$" ~/.bashrc; then
+          echo "'nwinkler'-theme already selected ..."
+        else
+          sed -i "s|^\(export BASH_IT_THEME=.*\)$|#\1\nexport BASH_IT_THEME='nwinkler'|" ~/.bashrc
+        fi
+      fi
+    fi
+    (bash "$HOME/opt/.bash_it/bash_it.sh" enable completion todo tmux ssh pip pip3 maven git_flow git_flow_avh git docker 'export' dirs conda awscli)
+    (bash "$HOME/opt/.bash_it/bash_it.sh" enable plugin xterm z_autoenv todo tmux tmuxinator ssh sshagent java history git extract explain docker dirs browser boot2docker battery aws autojump)
+    (bash "$HOME/opt/.bash_it/bash_it.sh" enable alias git todo.txt-cli vagrant curl clipboard apt)
 
     answer=$(yes_no "Do you want to try installing fasd?")
     if [ "y" == "$answer" ]; then
       sudo -- bash -c 'add-apt-repository ppa:aacebedo/fasd; apt-get update; apt-get install fasd'
-      bash -c 'bash-it enable plugin fasd'
+      (bash "$HOME/opt/.bash_it/bash_it.sh" enable plugin fasd)
     fi
   fi
   echo "done!"
@@ -157,3 +171,8 @@ if [ "y" == "$answer" ]; then
 fi
 
 echo "Setup finished!"
+
+answer=$(yes_no "Do you want to activate the new cofiguration (exec bash)?")
+if [ "y" == "$answer" ]; then
+  exec bash
+fi
