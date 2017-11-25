@@ -141,8 +141,10 @@ function install-bash-it() {
       fi
     fi
     (bash "$HOME/opt/.bash_it/bash_it.sh" enable completion todo tmux ssh pip pip3 maven git_flow git_flow_avh git docker 'export' dirs conda awscli)
-    (bash "$HOME/opt/.bash_it/bash_it.sh" enable plugin xterm z_autoenv todo tmux tmuxinator ssh sshagent java history git extract explain docker dirs browser boot2docker battery aws autojump)
-    (bash "$HOME/opt/.bash_it/bash_it.sh" enable alias git todo.txt-cli vagrant curl clipboard apt)
+    # additional completions: (bash "$HOME/opt/.bash_it/bash_it.sh" enable virtualbox svn npm makefile)
+    (bash "$HOME/opt/.bash_it/bash_it.sh" enable plugin xterm z_autoenv todo tmux tmuxinator ssh sshagent java history git extract explain docker dirs browser boot2docker battery aws autojump python)
+    # additional plugins: (bash "$HOME/opt/.bash_it/bash_it.sh" enable plugin subversion node nvm nginx)
+    (bash "$HOME/opt/.bash_it/bash_it.sh" enable alias git todo.txt-cli vagrant curl clipboard apt tmux systemd)
 
     answer=$(yes_no "Do you want to try installing fasd?")
     if [ "y" == "$answer" ]; then
