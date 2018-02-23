@@ -47,13 +47,12 @@ alias restart-network-manager="sudo service network-manager restart"
 
 # try to list old linux images to free stpace in /boot (ubuntu issue)
 purge_linux_images() {
-  echo "avaliable images:"
-  dpkg -l | grep linux-image
-  echo
-  echo "cleanup using:"
+  printf "avaliable images:\n%s\n" "$(dpkg -l | grep linux-image)"
+  printf "\ncleanup using:\n"
   for img in $(dpkg -l | grep linux-image | awk '$1=$1' | cut -d' ' -f2 | grep -v extra | sort | head -n-2); do
-    echo "sudo apt-get purge ${img}";
+    printf "sudo apt-get purge %s; " "${img}";
   done
+  printf "\n"
 }
 alias trim_boot="purge_linux_images"
 
