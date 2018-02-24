@@ -18,6 +18,43 @@ yes_no () {
   echo "$RESULT"
 }
 
+# install oh-my-zsh
+answer=$(yes_no "Do you want to install zsh & oh-my-zsh?")
+if [ "y" == "$answer" ]; then
+  echo "Checking zsh installation ..."
+
+  if [ -z "$( zsh --version 2> /dev/null )" ]
+  then
+    echo "No zsh version found! Trying to install zsh ..."
+    answer=$(yes_no "Do you have sudo permissions to install software?")
+    if [ "y" == "$answer" ]; then
+      if [ -n "$( apt-get --version 2> /dev/null )" ]
+      then
+        # APT system
+        sudo apt-get install zsh wget
+        chsh -s $(which zsh)
+      elif [ -n "$( yum --version 2> /dev/null )" ]
+      then
+        # RPM version
+        sudo yum install zsh wget
+        chsh -s $(which zsh)
+      fi
+    else
+      mkdir -p "$HOME/opt/zsh" && \
+      ( wget "http://www.zsh.org/pub/zsh.tar.gz" -O "$HOME/opt/zsh.tar.gz" || curl -o "$HOME/opt/zsh.tar.gz" "http://www.zsh.org/pub/zsh.tar.gz" ) && \
+      tar -xvzf "$HOME/opt/zsh.tar.gz" -C "$HOME/opt/zsh" --strip-components 1
+      bash -c "cd $HOME/opt/zsh/ && ./configure --bindir=\"$HOME/opt/zsh/bin\" && make && make install.bin"
+      chsh -s "$HOME/opt/zsh/bin/zsh"
+    fi
+  fi
+  echo "Using $( zsh --version ) ...    "
+
+  echo "Installing oh-my-zsh ..."
+  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -  2>/dev/null || curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+
+  echo "done!"
+fi
+
 echo "Setting up synchronized scripts from $SCRIPT_DIR ..."
 
 #
@@ -108,6 +145,7 @@ install-git-latexdiff() {
   echo "Example usage:"
   echo "git latexdiff --main .git latexdiff --main main.tex --output ./diff.pdf --bibtex HEAD~1 && evince diff.pdf"
 }
+
 # install bash-git-prompt
 function install-bash-git-prompt() {
   echo "Installing bash Git prompt ..."
@@ -159,6 +197,10 @@ if [ "y" == "$answer" ]; then
   answer=$(yes_no "Do you want to install git-latexdiff?")
   if [ "y" == "$answer" ]; then
     install-git-latexdiff
+  fi
+
+  if [ -n "$(echo $ZSH)" ]; then
+    echo "oh-my-zsh found ..."
   fi
   answer=$(yes_no "Do you want to install bash-it?")
   if [ "y" == "$answer" ]; then
