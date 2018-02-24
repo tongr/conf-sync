@@ -57,15 +57,15 @@ FOLDER="$(mkdir -p $FOLDER;cd $FOLDER;pwd)"
 
 if [ -z "$( git --version 2> /dev/null )" ]
 then
-  echo "No git version found! Tying to instal git ..."
-  if [ ! -z "$( apt-get )" ]
+  echo "No git version found! Trying to install git ..."
+  if [ -n "$( apt-get --version 2> /dev/null )" ]
   then
     # APT system
     sudo apt-get install git
-  elif [ ! -z "$( yum )" ]
+  elif [ -n "$( yum --version 2> /dev/null )" ]
   then
     # RPM version
-    sudo apt-get install git
+    sudo yum install git
   fi
 else
   echo "Using $( git --version ) ...	"
