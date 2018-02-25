@@ -91,6 +91,10 @@ fi
 #
 answer=$(yes_no "Do you want to install shell sources?")
 if [ "y" == "$answer" ]; then
+  if [ -e "$HOME/.zshrc" ] ; then
+    # postpone the loading of oh-my-zsh in favor of the settings found in the custom .zshrc
+    sed -i 's|^source \$\(ZSH/oh-my-zsh.sh\)$|#\1|' "$HOME/.zshrc"
+  fi
   IFS=' ' read -a cfgs <<< $(grep -vE "^\s*#.*$" "$SH_SCRIPT_DIR/sync.conf")
   for i in "${cfgs[@]}"; do
     KV=(${i//=/ })
