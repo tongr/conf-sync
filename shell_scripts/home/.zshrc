@@ -1,3 +1,18 @@
+# try to identify the session type
+if [ -z "$SESSION_TYPE" ]; then
+  #default: local
+  SESSION_TYPE=local
+  if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+    SESSION_TYPE=remote/ssh
+  # many other tests omitted
+  else
+    case $(ps -o comm= -p $PPID) in
+      sshd|*/sshd) SESSION_TYPE=remote/ssh;;
+    esac
+  fi
+fi
+
+
 # load aliases if they exist
 if [ -f "$HOME/.zsh_aliases" ]; then
     . "$HOME/.zsh_aliases"
@@ -22,7 +37,9 @@ export ZSH=$HOME/.oh-my-zsh
 # ZSH_THEME="bira"
 # ZSH_THEME="gnzh"
 # ZSH_THEME="amuse"
-ZSH_THEME="junkfood"
+# ZSH_THEME="junkfood"
+#custom linked theme
+ZSH_THEME="my_junkfood"
 
 # Change the command execution timestamp shown in the history command output.
 # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
