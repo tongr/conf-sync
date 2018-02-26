@@ -2,7 +2,7 @@
 Synchronization scripts for linux configration files
 
 ## Installation
-To create a local installation run:
+To create a local installation run (necessary packages: curl sudo):
 ```sh
 bash -c "$(curl -fsSL http://git.io/va5Ka )"
 ```

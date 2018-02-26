@@ -1,3 +1,8 @@
+# load aliases if they exist
+if [ -f "$HOME/.zsh_aliases" ]; then
+    . "$HOME/.zsh_aliases"
+fi
+
 # load user-defined keyboard mapping
 if [ -e "$HOME/.Xmodmap" ] ; then
   # is a display available?

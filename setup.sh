@@ -50,7 +50,7 @@ if [ "y" == "$answer" ]; then
   echo "Using $( zsh --version ) ...    "
 
   echo "Installing oh-my-zsh ..."
-  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -  2>/dev/null || curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -  2>/dev/null || curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || (echo "oh-my-zsh setup finished!")
 
   echo "done!"
 fi
@@ -226,7 +226,7 @@ fi
 
 echo "Setup finished!"
 
-answer=$(yes_no "Do you want to activate the new cofiguration (exec bash)?")
+answer=$(yes_no "Do you want to activate the new cofiguration (su -)?")
 if [ "y" == "$answer" ]; then
-  exec bash
+  su -
 fi

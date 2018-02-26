@@ -37,7 +37,7 @@ fi
 
 # output folder
 # set default folder to:
-FOLDER="$(pwd)/conf-sync"
+FOLDER="${HOME}/conf-sync"
 if [ ! -z $2 ]
 then
   echo "setting script folder to $2"
