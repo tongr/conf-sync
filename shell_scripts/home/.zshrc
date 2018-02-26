@@ -12,6 +12,11 @@ if [ -z "$SESSION_TYPE" ]; then
   fi
 fi
 
+# on remote connections: immediately open tmux
+if [ "$SESSION_TYPE" = "remote/ssh" ]; then
+  ZSH_TMUX_AUTOSTART=true
+  ZSH_TMUX_AUTOCONNECT=true
+fi
 
 # load aliases if they exist
 if [ -f "$HOME/.zsh_aliases" ]; then
