@@ -37,7 +37,7 @@ if [ "y" == "$answer" ]; then
       then
         # RPM version
         sudo yum install zsh wget
-        chsh -s $(which zsh)
+        sudo chsh -s $(which zsh)
       fi
     else
       mkdir -p "$HOME/opt/zsh" && \
@@ -227,5 +227,5 @@ echo "Setup finished!"
 
 answer=$(yes_no "Do you want to activate the new cofiguration (su -)?")
 if [ "y" == "$answer" ]; then
-  su -
+  sudo su - || su -
 fi
