@@ -50,9 +50,8 @@ if [ "y" == "$answer" ]; then
   echo "Using $( zsh --version ) ...    "
 
   echo "Installing oh-my-zsh ..."
-  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -  2>/dev/null || curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || (echo "oh-my-zsh setup finished!")
-
-  echo "done!"
+  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -  2>/dev/null || curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || \
+    (echo "... oh-my-zsh setup finished!")
 fi
 
 echo "Setting up synchronized scripts from $SCRIPT_DIR ..."
