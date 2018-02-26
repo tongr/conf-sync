@@ -154,7 +154,7 @@ _sshproxy() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ "$COMP_CWORD" -gt "1" ]; the
 complete -F _sshproxy sshproxy
 
 # calculate a server port number (5____) given a host name (param $1)
-function server_port { printf "5%-4s%s\n" "$(echo $((0x$(echo -n $1 | md5sum | cut -f1 -d' '))) | cut -c2-5)" | tr ' ' '0'; }
+function server_port { printf "5%-4s%s\n" "$(echo $((0x$(echo -n $1 | md5sum | cut -f1 -d' ' | cut -c-5))) | cut -c2-5)" | tr ' ' '0'; }
 
 # create an entry for the tunneled connection to a server in .ssh/config
 # --> read the config, change hostname ($1) to "__host" HostName to "127.0.0.1" port to ```server_port $1``` and write the entry
