@@ -32,12 +32,10 @@ if [ "y" == "$answer" ]; then
       then
         # APT system
         sudo apt-get install zsh wget
-        chsh -s $(which zsh)
       elif [ -n "$( yum --version 2> /dev/null )" ]
       then
         # RPM version
         sudo yum install zsh wget
-        sudo chsh -s $(which zsh)
       fi
     else
       mkdir -p "$HOME/opt/zsh" && \
@@ -47,10 +45,13 @@ if [ "y" == "$answer" ]; then
       chsh -s "$HOME/opt/zsh/bin/zsh"
     fi
   fi
-  echo "Using $( zsh --version ) ...    "
+  echo "Using $( zsh --version ) ..."
+  sudo usermod --shell $(which zsh) "$USER" || \
+  sudo chsh -s $(which zsh)
 
   echo "Installing oh-my-zsh ..."
-  sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -  2>/dev/null || curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || \
+  omzs_url='https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh'
+  sh -c "$(wget $omzs_url -O - 2>/dev/null | sed 's|if hash chsh|if false|' | sed 's|env zsh|#env zsh|' || curl -fsSL $omzs_url | sed 's|if hash chsh|if false|' | sed 's|env zsh|#env zsh|' )" || \
     (echo "... oh-my-zsh setup finished!")
 fi
 
