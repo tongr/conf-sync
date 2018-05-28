@@ -14,4 +14,4 @@ git remote set-url --push origin "you really don't want to do that"
 ```
 
 ## Keyboard setup
-In order to support German umlauts follow the following description: https://askubuntu.com/a/873950
+In order to support German umlauts follow the following description: https://askubuntu.com/a/1007440
