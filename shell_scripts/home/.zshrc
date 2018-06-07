@@ -26,14 +26,14 @@ if [ -f "$HOME/.zsh_aliases" ]; then
     . "$HOME/.zsh_aliases"
 fi
 
-# load user-defined keyboard mapping
-if [ -e "$HOME/.Xmodmap" ] ; then
-  # is a display available?
-  if [ -n "${DISPLAY+x}" ]; then
-    # check if xmodmap is available
-    command -v xmodmap >/dev/null 2>&1 && xmodmap "$HOME/.Xmodmap"
-  fi
-fi
+## load user-defined keyboard mapping
+#if [ -e "$HOME/.Xmodmap" ] ; then
+#  # is a display available?
+#  if [ -n "${DISPLAY+x}" ]; then
+#    # check if xmodmap is available
+#    command -v xmodmap >/dev/null 2>&1 && xmodmap "$HOME/.Xmodmap"
+#  fi
+#fi
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
