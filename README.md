@@ -13,5 +13,13 @@ To prevent accidental pushs execute:
 git remote set-url --push origin "you really don't want to do that"
 ```
 
+There are some predefined scripts that install basic software packages and settings:
+ 1. To set up a desktop environment:
+    ```bash
+    curl --progress-bar --fail "https://raw.githubusercontent.com/tongr/conf-sync/master/install/ubuntu-desktop.sh" --output install-ubuntu-desktop.sh; \
+    bash install-ubuntu-desktop.sh;
+    ```
+
 ## Keyboard setup
 In order to support German umlauts follow the following description: https://askubuntu.com/a/1007440
+
