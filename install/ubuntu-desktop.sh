@@ -15,7 +15,7 @@ bash -c "$(curl -fsSL http://git.io/va5Ka)"
 
 # anaconda
 anaconda_version="Anaconda3-5.2.0-Linux-x86_64" && wget --show-progress "https://repo.anaconda.com/archive/${anaconda_version}.sh" && bash "${anaconda_version}.sh"
-echo -e '# added by Anaconda3 installer\nexport PATH="/home/tongr/anaconda3/bin:/home/tongr/anaconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"' >> .zshrc
+echo -e '# added by Anaconda3 installer\nexport PATH="/home/tongr/anaconda3/bin:$PATH"' >> ~/.zshrc
 
 # some more development tools
 sudo apt install maven git-flow docker.io
@@ -62,3 +62,5 @@ EOM
 
 sudo sed -i -e 's|^\(\s*<description>English (US, euro on 5)<\/description>.*\)$|\1\n</configItem>\n</variant>\n<variant>\n<configItem>\n<name>us-de</name>\n<description>English (US, with german umlauts)</description>|' /usr/share/X11/xkb/rules/evdev.xml
 
+# additional software
+sudo snap install gimp
