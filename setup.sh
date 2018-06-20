@@ -3,6 +3,7 @@ set -e
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SH_SCRIPT_DIR="$ROOT_DIR/shell_scripts"
 LN_DIR="$ROOT_DIR/links"
+INSTALL_SCRIPT_DIR="$ROOT_DIR/install"
 COMMENT="# executing synchronized script"
 
 #
@@ -117,109 +118,15 @@ if [ "y" == "$answer" ]; then
 fi
 
 #
-# setup shell scripts
+# system dependent installers
 #
-# install git-latexdiff
-install-git-latexdiff() {
-  echo "Installing git-latexdiff ..."
-  if [ ! -d "$HOME/bin/git-latexdiff" ] ; then
-    if [ ! -d "$HOME/opt" ] ; then
-      mkdir "$HOME/opt"
-    fi
-    if [ ! -d "$HOME/bin" ] ; then
-     mkdir "$HOME/bin"
-    fi
-    cd "$HOME/opt"
-    if [ ! -d "$HOME/opt/git-latexdiff" ] ; then
-      git clone https://gitlab.com/git-latexdiff/git-latexdiff.git --depth=1
-      # install latexdiff
-      if [ ! -d "$HOME/opt/git-latexdiff/latexdiff" ] ; then
-        wget -qO- -O /tmp/latexdiff.zip http://mirrors.ctan.org/support/latexdiff.zip && unzip /tmp/latexdiff.zip -d "$HOME/opt/git-latexdiff" && rm /tmp/latexdiff.zip
-      fi
-    fi
-    if [ ! -e "$HOME/bin/latexdiff" ] ; then
-      ln -s "$HOME/opt/git-latexdiff/latexdiff/latexdiff" "$HOME/bin/latexdiff"
-    fi
-    if [ ! -e "$HOME/bin/git-latexdiff" ] ; then
-      ln -s "$HOME/opt/git-latexdiff/git-latexdiff" "$HOME/bin/git-latexdiff"
-    fi
-  fi
-  echo "done!"
-  echo "Example usage:"
-  echo "git latexdiff --main .git latexdiff --main main.tex --output ./diff.pdf --bibtex HEAD~1 && evince diff.pdf"
-}
-
-# install bash-git-prompt
-function install-bash-git-prompt() {
-  echo "Installing bash Git prompt ..."
-  if [ ! -d "$HOME/opt/bash-git-prompt" ] ; then
-    mkdir -p "$HOME/opt"
-    git clone https://github.com/magicmonty/bash-git-prompt.git "$HOME/opt/bash-git-prompt" --depth=1
-  fi
-  echo "done!"
-}
-# install bash-it
-function install-bash-it() {
-  echo "Installing bash-it ..."
-  if [ ! -d "$HOME/bash-git-prompt" ] ; then
-    mkdir -p "$HOME/opt"
-    if [ ! -d "$HOME/opt/.bash_it" ];then
-      git clone --depth=1 https://github.com/Bash-it/bash-it.git "$HOME/opt/.bash_it"
-    fi
-    if grep -q '^source "$BASH_IT"/bash_it.sh$' ~/.bashrc; then
-      echo "It seems the .bashrc file is already configured for bash-it." # You dont have to append bash-it templates at the end of .bashrc ...
-      answer=$(yes_no "Do you want to keep the existing configuration of bash-it?")
-      if [ "y" == "$answer" ]; then
-        bash "$HOME/opt/.bash_it/install.sh" "--no-modify-config"
-      else
-        bash "$HOME/opt/.bash_it/install.sh"
-        echo 'Setting up plugins and extension ...'
-        if grep -q "^export BASH_IT_THEME='nwinkler'$" ~/.bashrc; then
-          echo "'nwinkler'-theme already selected ..."
-        else
-          sed -i "s|^\(export BASH_IT_THEME=.*\)$|#\1\nexport BASH_IT_THEME='nwinkler'|" ~/.bashrc
-        fi
-      fi
-    fi
-    (bash "$HOME/opt/.bash_it/bash_it.sh" enable completion todo tmux ssh pip pip3 maven git_flow git_flow_avh git docker 'export' dirs conda awscli)
-    # additional completions: (bash "$HOME/opt/.bash_it/bash_it.sh" enable virtualbox svn npm makefile)
-    (bash "$HOME/opt/.bash_it/bash_it.sh" enable plugin xterm z_autoenv todo tmux tmuxinator ssh sshagent java history git extract explain docker dirs browser boot2docker battery aws autojump python)
-    # additional plugins: (bash "$HOME/opt/.bash_it/bash_it.sh" enable plugin subversion node nvm nginx)
-    (bash "$HOME/opt/.bash_it/bash_it.sh" enable alias git todo.txt-cli vagrant curl clipboard apt tmux systemd)
-
-    answer=$(yes_no "Do you want to try installing fasd?")
-    if [ "y" == "$answer" ]; then
-      sudo -- bash -c 'add-apt-repository ppa:aacebedo/fasd; apt-get update; apt-get install fasd'
-      (bash "$HOME/opt/.bash_it/bash_it.sh" enable plugin fasd)
-    fi
-  fi
-  echo "done!"
-}
 answer=$(yes_no "Do you want to install additional software utilities?")
 if [ "y" == "$answer" ]; then
-  answer=$(yes_no "Do you want to install git-latexdiff?")
-  if [ "y" == "$answer" ]; then
-    install-git-latexdiff
+  if [ "y" == "$(yes_no 'Do you want to use the Ubuntu Desktop script?')" ]; then
+    bash "${INSTALL_SCRIPT_DIR}/ubuntu-desktop.sh"
   fi
-
-  if [ -n "$(echo $ZSH)" ]; then
-    echo "oh-my-zsh found ..."
-  fi
-  answer=$(yes_no "Do you want to install bash-it?")
-  if [ "y" == "$answer" ]; then
-    install-bash-it
-    # uninstall 'old' bash-git-prompt installations
-    if [ -e "$HOME/opt/bash-git-prompt/gitprompt.sh" ] ; then
-      mkdir -p "$HOME/opt/trash"
-      rm -rf "$HOME/opt/trash/bash-git-prompt"
-      mv "$HOME/opt/bash-git-prompt" "$HOME/opt/trash/"
-    fi
-  else
-    # bash git prompt is contained in bash-it
-    answer=$(yes_no "Do you want to install bash-git-prompt?")
-    if [ "y" == "$answer" ]; then
-      install-bash-git-prompt
-    fi
+  if [ "y" == "$(yes_no 'Do you want to use the Ubuntu development script?')" ]; then
+    bash "${INSTALL_SCRIPT_DIR}/ubuntu-dev.sh"
   fi
 fi
 
