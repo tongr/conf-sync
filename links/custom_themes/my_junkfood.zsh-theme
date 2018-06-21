@@ -1,8 +1,7 @@
 # Totally ripped off Dallas theme
 
 # Grab the current date (%W) and time (%t):
-#JUNKFOOD_TIME_="%{$fg_bold[white]%}( %D %T )%{$reset_color%}"
-JUNKFOOD_TIME_="%{$fg_bold[white]%}( %D{%Y-%m-%f} %T )%{$reset_color%}"
+JUNKFOOD_TIME_="%{$fg_bold[white]%}( %D %T )%{$reset_color%}"
 
 # Grab the current machine name and color it according to the connection type 
 if [ -z "$SESSION_TYPE" ]; then
