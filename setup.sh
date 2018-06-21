@@ -63,7 +63,14 @@ echo "Setting up synchronized scripts from $SCRIPT_DIR ..."
 #
 answer=$(yes_no "Do you want to install config links?")
 if [ "y" == "$answer" ]; then
-  while read -u 5 line; do
+  line_nr=0
+  lines="$(sed -n '$=' $LN_DIR/sync.conf)"
+  while [ $line_nr -lt $lines ]; do
+    line_nr=$((line_nr + 1))
+    line="$(sed -n ${line_nr}p $LN_DIR/sync.conf)"
+    if [[ $line == \#* ]] ; then
+      continue
+    fi
     KV=(${line//=/ })
     SOURCE="$LN_DIR/${KV[0]}"
     DESTINATION="${KV[1]/#\~/$HOME}"
@@ -83,7 +90,7 @@ if [ "y" == "$answer" ]; then
         fi
       fi
     done
-  done 5<<< $(grep -vE "^\s*#.*$" "$LN_DIR/sync.conf")
+  done
 fi
 
 #
