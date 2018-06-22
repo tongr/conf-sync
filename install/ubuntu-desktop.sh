@@ -185,3 +185,11 @@ elif [ "y" == "$(yes_no 'Do you want to install the bash extension git-prompt?')
   install_bash_git_prompt
 fi
 
+
+#
+# deactivate wireless power management permanently
+#
+if [ "y" == "$(yes_no 'Do you want to deactivate wireless power management?')" ]; then
+  # see also: https://unix.stackexchange.com/questions/269661/how-to-turn-off-wireless-power-management-permanently
+  sudo sed -i 's|wifi.powersave = [^2]|wifi.powersave = 2|' /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+fi
