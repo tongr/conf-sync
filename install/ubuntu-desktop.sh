@@ -49,6 +49,7 @@ xkb_symbols "us-de" {
     key <AD07> {    [     u,    U,  udiaeresis, Udiaeresis      ]   };
     key <AD09> {    [     o,    O,  odiaeresis, Odiaeresis      ]   };
     key <AC02> {    [     s,    S,  ssharp,     ssharp          ]   };
+    key <AD03> {    [     e,    E,  EuroSign,   cent            ]   };
 
     // and some other keys
 
