@@ -161,9 +161,8 @@ tunnel_host() {
     fi
   fi
 }
-_tunnel_host() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ -f "$HOME/.ssh/config" ] ; then if [ "$COMP_CWORD" -lt "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); elif [ "$COMP_CWORD" -lt "3" ]; then COMPREPLY=($(compgen -W "close $(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) );  fi; fi; return 0; }
-#TODO complete -F _tunnel_host tunnel_host
 
+# Deprecated .. use __[hostname] representative to connect to tunneled host
 tunnel_ssh() {
   if [ "$#" -le "1" ]; then
     >&2 echo "Error: host(s) missing"'!';
@@ -249,5 +248,3 @@ tunnel_port() {
     ssh -f -N -L "${forward_str}" $host
   fi
 }
-_tunnel_port() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ -f "$HOME/.ssh/config" ] ; then if [ "$COMP_CWORD" -eq "2" ]; then COMPREPLY=($(compgen -W "$(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)" -- ${cur}) ); fi; fi; return 0; }
-#TODO complete -F _tunnel_port tunnel_port

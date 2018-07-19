@@ -71,3 +71,14 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+export fpath=(${HOME}/.zsh/autocomplete $fpath)
+
+# compsys initialization
+autoload -U compinit
+compinit
+ 
+# show completion menu when number of options is at least 2
+zstyle ':completion:*' menu select=2
+
+# show descriptionf for recommendations
+zstyle ":completion:*:descriptions" format "%B%d%b" 

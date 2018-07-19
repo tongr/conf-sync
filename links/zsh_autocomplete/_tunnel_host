@@ -1,0 +1,11 @@
+#compdef tunnel_host
+
+function _ssh_remote_hosts {
+  _values 'remote hosts' $(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)
+}
+
+function _ssh_tunnel_hosts {
+  _values 'tunnel hosts' close $(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)
+}
+
+_arguments '1:remote host:_ssh_remote_hosts' '2:tunnel host:_ssh_tunnel_hosts'

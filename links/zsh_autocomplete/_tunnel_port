@@ -1,0 +1,19 @@
+#compdef tunnel_port
+
+function _ssh_remote_hosts {
+  _values 'remote hosts' $(awk '$1=="Host" { print $2 }' $HOME/.ssh/config)
+}
+
+# using a function and checking existence of common_ports seems the better 
+# solution, however, the description of _values overrides the original tag 
+# "remote port" and "local port"
+#
+#function _relevant_ports {
+#  if [ -f ~/.zsh/autocomplete/common_ports ]; then
+#    _values 'ports' $(cat ~/.zsh/autocomplete/common_ports)
+#  else
+#    _values 'ports' 22 80 8080
+#  fi
+#}
+
+_arguments '1:remote port:($(cat ~/.zsh/autocomplete/common_ports))' '2:remote host:_ssh_remote_hosts' '3:local port:($(cat ~/.zsh/autocomplete/common_ports))'
