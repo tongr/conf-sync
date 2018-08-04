@@ -64,15 +64,21 @@ function server_port { printf "5%-4s%s\n" "$(echo $((0x$(echo -n $1 | md5sum | c
 # create an entry for the tunneled connection to a server in .ssh/config
 # --> read the config, change hostname ($1) to "__host" HostName to "127.0.0.1" port to ```server_port $1``` and write the entry
 add_tunneled_host() {
-  local orig_host=$1
-  local start_line=""
-  local end_line=""
-  local config_file='.ssh/config'
-  if [ ! -f "$HOME/.ssh/config" ] ; then
+  local orig_host
+  local start_line
+  local end_line
+  local config_file
+  orig_host=$1
+  start_line=""
+  end_line=""
+  config_file="$HOME/.ssh/config"
+  if [ ! -f "${config_file}" ] ; then
+    >&2 echo "Error: SSH config ${config_file} not found"'!'
     return 1
   fi
   for hostline in $(grep -n '^Host[[:space:]]*' $config_file | sed 's/Host[[:space:]]*//'); do
-    local host="$(echo $hostline | cut -f2 -d':')"
+    local host
+    host="$(echo $hostline | cut -f2 -d':')"
     if [[ "__${orig_host}" == "$host" ]]; then
       >&2 echo "Error: Tunneled host already exists"'!'
       return 1
@@ -84,8 +90,8 @@ add_tunneled_host() {
     fi
   done
   if [[ -z "$start_line" && -z "$end_line" ]]; then
-      >&2 echo "Error: No config for ${orig_host} found"'!'
-     return 1
+    >&2 echo "Error: No config for ${orig_host} found"'!'
+    return 1
   fi
   echo "Creating tunneled host based on: $orig_host (line ${start_line} -- ${end_line} in ${config_file})"
   echo "" >> $config_file
@@ -99,23 +105,30 @@ add_tunneled_host() {
 tunnel_host() {
   if [ "$#" -lt "1" ]; then
     >&2 echo "Error: host(s) missing"'!';
-    >&2 echo "USAGE: $FUNCNAME REMOTE_HOST TUNNEL_HOST|close";
+    >&2 echo "USAGE: $funcstack[1] REMOTE_HOST [TUNNEL_HOST|close]";
     return 1;
   fi
+  local remote_host
+  local lport
+  local open_connections
   # get parameters
-  local remote_host="$1"
+  remote_host="$1"
   # use always the same port for one remote host?
-  local lport=`server_port $remote_host`
-  local open_connections="$( netstat -tlpn 2> /dev/null | grep ":$lport " | wc -l )"
+  lport=`server_port $remote_host`
+  command -v netstat >/dev/null 2>&1 || {
+    echo >&2 "The netstat command cannot be found, please install it (e.g., sudo apt-get install net-tools)"
+    return 1;
+  }
+  open_connections="$( netstat -tlpn 2> /dev/null | grep ":$lport " | wc -l )"
   if [[ "$#" -lt "2" ]]; then
     if [[ "0" -lt "$open_connections" ]]; then
       # port not free
       >&2 echo "Open connection found (port $lport not free)"
-      >&2 echo "Try closing: $FUNCNAME $remote_host close"
+      >&2 echo "Try closing: $funcstack[1] $remote_host close"
       return 1;
     else
       >&2 echo "Free port for the connect to $remote_host found: $lport"
-      >&2 echo "Open connection using: $FUNCNAME $remote_host TUNNEL_HOST"
+      >&2 echo "Open connection using: $funcstack[1] $remote_host TUNNEL_HOST"
       return 1;
     fi
   else
@@ -132,7 +145,7 @@ tunnel_host() {
       kill $(pidgrep "ssh -f .* -L "$lport:$rhost:$rport" -N")
     else
       if [[ "0" -lt "$open_connections" ]]; then
-        >&2 echo "Open connection found (port $lport not free), try to close the connection first: $FUNCNAME $remote_host close"
+        >&2 echo "Open connection found (port $lport not free), try to close the connection first: $funcstack[1] $remote_host close"
         return 1
       fi
       local tunnel_host="$2"
@@ -166,7 +179,7 @@ tunnel_host() {
 tunnel_ssh() {
   if [ "$#" -le "1" ]; then
     >&2 echo "Error: host(s) missing"'!';
-    >&2 echo "USAGE: $FUNCNAME TUNNEL_HOST REMOTE_HOST";
+    >&2 echo "USAGE: $funcstack[1] TUNNEL_HOST REMOTE_HOST";
     return 1;
   fi
   # get parameters
@@ -224,23 +237,28 @@ _tunnel_ssh() { cur="${COMP_WORDS[COMP_CWORD]}"; if [ -f "$HOME/.ssh/config" ] ;
 tunnel_port() {
   if [ "$#" -lt "1" ]; then
     >&2 echo "Error: port (and host) missing"'!';
-    >&2 echo "USAGE: $FUNCNAME TARGET_PORT [TARGET_HOST [LOCAL_PORT]]";
+    >&2 echo "USAGE: $funcstack[1] LOCAL_PORT [TARGET_HOST [TARGET_PORT]]";
     return 1;
   fi
 
   # get parameters
-  local port="$1"
-  local host="$2"
-  local local_port="${3:-$port}"
-  local local_forward_str="${local_port}:localhost"
-  local PROXY_PID=`pidgrep ssh -f -N -L ${local_forward_str}`
+  local local_port
+  local port
+  local host
+  local local_forward_str
+  local PROXY_PID
+  local_port="$1"
+  host="$2"
+  port="${3:-local_port}"
+  local_forward_str="${local_port}:localhost"
+  PROXY_PID=`pidgrep ssh -f -N -L ${local_forward_str}`
   if [ "$PROXY_PID" != "" ]; then
-    echo "closing tunneled port $port (killing \"$(psgrep "ssh -f -N -L ${local_forward_str}" | cut -c66-)\") ..."
+    echo "closing tunneled port $port (killing \"$(psgrep "ssh -f -N -L ${local_forward_str}" | cut -c66-)\" with PID $PROXY_PID) ..."
     kill $PROXY_PID
   else
     if [ "$#" -le "1" ]; then
       >&2 echo "Error: host missing to create a connection"'!';
-      >&2 echo "USAGE: $FUNCNAME TARGET_PORT TARGET_HOST [LOCAL_PORT]";
+      >&2 echo "USAGE: $funcstack[1] LOCAL_PORT TARGET_HOST [TARGET_PORT]";
       return 1;
     fi
     local forward_str="${local_forward_str}:${port}"
