@@ -82,6 +82,14 @@ fi
 
 
 #
+# install git-cola
+#
+if [ "y" == "$(yes_no 'Do you want to install git-cola?')" ]; then
+  sudo snap install git-cola
+fi
+
+
+#
 # install GitKraken
 #
 if [ "y" == "$(yes_no 'Do you want to install GitKraken?')" ]; then

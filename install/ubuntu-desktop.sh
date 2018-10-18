@@ -124,6 +124,14 @@ fi
 
 
 #
+# install Bitwarden
+#
+if [ "y" == "$(yes_no 'Do you want to install Bitwarden?')" ]; then
+  sudo snap install bitwarden
+fi
+
+
+#
 # install Xournal
 #
 if [ "y" == "$(yes_no 'Do you want to install Xournal')" ]; then
