@@ -92,8 +92,13 @@ fi
 # install Wavebox
 #
 if [ "y" == "$(yes_no 'Do you want to install Wavebox?')" ]; then
+  # addadditional font types
   sudo apt install ttf-mscorefonts-installer
+  # isntall
   sudo snap install wavebox
+  # enable printing
+  sudo snap connect wavebox:cups-control
+  # setup autostart
   mkdir -p ~/.config/autostart
   echo -e '[Desktop Entry]\nType=Application\nName=Wavebox\nExec=wavebox\nX-GNOME-Autostart-enabled=true' > ~/.config/autostart/Wavebox.desktop
 fi
