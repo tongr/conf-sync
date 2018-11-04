@@ -58,14 +58,17 @@ HIST_STAMPS="yyyy-mm-dd"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
+  common-aliases
   git
+  git-flow-avh
+  git-extras
   gitfast
-  git-flow
   tmux
   docker
   colored-man-pages
   extract
 )
+
 #aws
 #cp
 #rsync
@@ -83,3 +86,4 @@ zstyle ':completion:*' menu select=2
 
 # show descriptionf for recommendations
 zstyle ":completion:*:descriptions" format "%B%d%b" 
+setopt menu_complete
