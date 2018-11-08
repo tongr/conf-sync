@@ -62,28 +62,32 @@ plugins=(
   git
   git-flow-avh
   git-extras
-  gitfast
   tmux
   docker
   colored-man-pages
   extract
 )
-
 #aws
 #cp
 #rsync
+
+#deactivate/override the recent branch extraction for git (very slow)
+__git_recent_branches() {}
 
 source $ZSH/oh-my-zsh.sh
 
 export fpath=(${HOME}/.zsh/autocomplete $fpath)
 
-# compsys initialization
-autoload -U compinit
-compinit
- 
 # show completion menu when number of options is at least 2
 zstyle ':completion:*' menu select=2
 
-# show descriptionf for recommendations
-zstyle ":completion:*:descriptions" format "%B%d%b" 
-setopt menu_complete
+# select first option for git co(checkout)  automatically (same as `setopt menu_complete` but only for checkout)
+zstyle ':completion:*:git*c(o|heckout):*' menu yes select
+
+# Show message while waiting for completion
+zstyle ':completion:*:git*c(o|heckout):*' show-completer true
+
+# compsys initialization
+autoload -U compinit promptinit
+compinit
+
