@@ -46,12 +46,12 @@ fi
 # install Anaconda
 #
 if [ "y" == "$(yes_no 'Do you want to install Anaconda?')" ]; then
-  anaconda_version="Anaconda3-5.2.0-Linux-x86_64"
-  read -p "  Set anaconda version (default: Anaconda3-5.2.0-Linux-x86_64): " anaconda_version
-  anaconda_version="${version_name:-Anaconda3-5.2.0-Linux-x86_64}"
+  anaconda_version="Anaconda3-5.3.0-Linux-x86_64"
+  read -p "  Set anaconda version (default: ${anaconda_version}): " version_name
+  anaconda_version="${version_name:-$anaconda_version}"
   wget --show-progress "https://repo.anaconda.com/archive/${anaconda_version}.sh" && bash "${anaconda_version}.sh"
-  if [ "y" == "$(yes_no '  Add ~/anaconda3/bin to .zshrc path?')" ]; then
-    echo -e '# add Anaconda3\nexport PATH="${HOME}/anaconda3/bin:${PATH}"' >> ~/.zshrc
+  if [ "y" == "$(yes_no '  Add ~/anaconda3/etc/profile.d/conda.sh to .zshrc?')" ]; then
+    echo -e '# add Anaconda3\nsource "${HOME}/anaconda3/etc/profile.d/conda.sh"' >> ~/.zshrc
   fi
 fi
 
