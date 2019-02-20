@@ -79,12 +79,16 @@ fi
 
 
 #
-# install Guake
+# install Tilda/Guake
 #
-if [ "y" == "$(yes_no 'Do you want to install Guake?')" ]; then
+if [ "y" == "$(yes_no 'Do you want to install dropdown terminal Tilda?')" ]; then
+  sudo apt install tilda
+  mkdir -p ~/.config/autostart
+  echo -e '[Desktop Entry]\nType=Application\nName=Dropdown Terminal (Guake/Tilda)\nExec=tilda\nX-GNOME-Autostart-enabled=true' > ~/.config/autostart/Terminal.desktop
+elif [ "y" == "$(yes_no 'Do you want to install dropdown terminal Guake?')" ]; then
   sudo apt install guake
   mkdir -p ~/.config/autostart
-  echo -e '[Desktop Entry]\nType=Application\nName=Guake\nExec=guake\nX-GNOME-Autostart-enabled=true' > ~/.config/autostart/Guake.desktop
+  echo -e '[Desktop Entry]\nType=Application\nName=Dropdown Terminal (Guake/Tilda)\nExec=guake\nX-GNOME-Autostart-enabled=true' > ~/.config/autostart/Terminal.desktop
 fi
 
 
