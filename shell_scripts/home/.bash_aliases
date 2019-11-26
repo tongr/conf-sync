@@ -39,6 +39,9 @@ pidgrep() { psgrep "$*" | awk '{print $2}'; }
 pidgrepa() { psgrepa "$*" | awk '{print $2}'; }
 alias pidg="pidgrep"
 
+# use git diff instead of std diff if possible
+which git 2>&1 > /dev/null && alias diff="git diff --no-index"
+
 #
 # fixes for annoying ubuntu problems
 #

@@ -3,12 +3,20 @@ alias ll='ls -lh'
 alias la='ls -a'
 alias lla='ll -a'
 
+alias cd..='cd ..'
+alias cd...='cd ../..'
+alias cd....='cd ../../..'
+alias cd.....='cd ../../../..'
+
 # get the PID(s) of commands matching the query (found w/ ps)
 #get_pid() { ps axf | grep "$*" | grep -v grep | awk '{print $1}'; }
 alias psgrep="ps ux -U $USER | grep -v grep | grep"
 alias psgrepa="ps aux | grep -v grep | grep"
 pidgrep() { psgrep "$*" | awk '{print $2}'; }
 pidgrepa() { psgrepa "$*" | awk '{print $2}'; }
+
+# use git diff instead of std diff if possible
+which git 2>&1 > /dev/null && alias diff="git diff --no-index"
 
 #
 # fixes for annoying ubuntu problems
