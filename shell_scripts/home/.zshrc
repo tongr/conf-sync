@@ -75,11 +75,13 @@ plugins=(
   git
   git-flow-avh
   git-extras
+  history-substring-search
+  minikube
+  rsync
   tmux
+  zsh-autosuggestions
+  zsh-syntax-highlighting
 )
-#aws
-#cp
-#rsync
 
 #deactivate/override the recent branch extraction for git (very slow)
 __git_recent_branches() {}
@@ -101,12 +103,9 @@ zstyle ':completion:*:git*c(o|heckout):*' show-completer true
 autoload -U compinit promptinit
 compinit
 
-# add kubectl autocomplete if available
-if [ $(command -v kubectl) ]; then
-  source <(kubectl completion zsh);
-fi
 
-# check if we can find anaconda3
-if [ -e "${HOME}/anaconda3/etc/profile.d/conda.sh" ] ; then
-  source "${HOME}/anaconda3/etc/profile.d/conda.sh"
+
+# activate miniconda3 (if exists)
+if [ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]; then
+    source "${HOME}/miniconda3/etc/profile.d/conda.sh"
 fi

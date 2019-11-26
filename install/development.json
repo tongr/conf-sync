@@ -1,0 +1,115 @@
+{
+  "java": {
+    "apk": "openjdk11",
+    "apt": "openjdk-11-jdk",
+    "pacman": "jdk11-openjdk",
+    "yum": "java-11-openjdk-devel"
+  },
+  "maven": {
+    "default": "maven",
+    "check_available": "mvn"
+  },
+  "git-flow": {
+    "apt": "git-flow",
+    "check_available": {
+      "type": "lambda",
+      "code": "lambda cli: cli.run(\"git flow version\", silent=True)"
+    },
+    "requirements": [
+      "bash",
+      "wget"
+    ],
+    "manual": [
+      "wget https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh -O ${HOME}/gitflow-installer.sh",
+      "bash ${HOME}/gitflow-installer.sh install stable",
+      "rm ${HOME}/gitflow-installer.sh"
+    ]
+  },
+  "docker": {
+    "apt": [
+      "apt-get -y install apt-transport-https ca-certificates curl gnupg-agent software-properties-common",
+      "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
+      "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"",
+      "apt-get update",
+      "apt-get -y install docker-ce docker-ce-cli containerd.io",
+      "curl -L \"https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
+      "chmod +x /usr/local/bin/docker-compose"
+    ],
+    "yum": [
+      "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo",
+      "yum install -y docker-ce docker-ce-cli containerd.io curl",
+      "curl -L \"https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
+      "chmod +x /usr/local/bin/docker-compose"
+    ],
+    "pacman": "docker"
+  },
+  "minikube": {
+    "flavors": {
+      "architecture": [
+        "**linux-amd64**",
+        "linux-arm",
+        "linux-arm64",
+        "linux-ppc64le",
+        "linux-s390x",
+        "linux-x86_64"
+      ]
+    },
+    "manual": [
+      "wget --show-progress https://storage.googleapis.com/minikube/releases/latest/minikube-{architecture} -O ${HOME}/minikube",
+      "mkdir -p /usr/local/bin/",
+      "install ${HOME}/minikube /usr/local/bin/",
+      "rm ${HOME}/minikube"
+    ]
+  },
+  "conda": {
+    "as_sudo": false,
+    "flavors": {
+      "architecture": [
+        "**Linux-x86_64**",
+        "Linux-ppc64le",
+        "Linux-x86"
+      ]
+    },
+    "requirements": [
+      "bash",
+      "wget"
+    ],
+    "manual": [
+      "wget --show-progress https://repo.anaconda.com/miniconda/Miniconda3-latest-{architecture}.sh -O ${HOME}/Miniconda3-latest-{architecture}.sh",
+      "bash ${HOME}/Miniconda3-latest-{architecture}.sh -b -f -p ${HOME}/miniconda3",
+      {
+        "write_to_file": {
+          "name": "${HOME}/.zshrc",
+          "mode": "a",
+          "content": "# activate conda\nsource ${HOME}/miniconda3/etc/profile.d/conda.sh\n"
+        }
+      },
+      "rm ${HOME}/Miniconda3-latest-{architecture}.sh"
+    ]
+  },
+  "aws": {
+    "as_sudo": false,
+    "flavors": {
+      "architecture": [
+        "**linux-x86_64**",
+        "linux-aarch64"
+      ]
+    },
+    "requirements": [
+      "bash",
+      "unzip",
+      "wget"
+    ],
+    "check_available": {
+      "type": "file_exists",
+      "file": "${HOME}/opt/bin/aws"
+    },
+    "manual": [
+      "wget --show-progress https://awscli.amazonaws.com/awscli-exe-{architecture}.zip -O ${HOME}/awscliv2.zip",
+      "unzip ${HOME}/awscliv2.zip -d ${HOME}",
+      "mkdir -p ${HOME}/opt/bin",
+      "bash ${HOME}/aws/install --install-dir ${HOME}/opt/aws-cli --bin-dir ${HOME}/opt/bin/",
+      "rm -rf  ${HOME}/aws ${HOME}/awscliv2.zip"
+    ]
+  }
+}

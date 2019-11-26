@@ -1,0 +1,142 @@
+{
+  "basic commands": {
+    "description": "basic commands (like curl, git, htop, etc.)",
+    "default": "bash curl git htop sed tmux unzip wget",
+    "check_available": [
+      {
+        "type": "find_executable",
+        "cmd": "bash"
+      },
+      {
+        "type": "find_executable",
+        "cmd": "curl"
+      },
+      {
+        "type": "find_executable",
+        "cmd": "git"
+      },
+      {
+        "type": "find_executable",
+        "cmd": "htop"
+      },
+      {
+        "type": "find_executable",
+        "cmd": "sed"
+      },
+      {
+        "type": "find_executable",
+        "cmd": "tmux"
+      },
+      {
+        "type": "find_executable",
+        "cmd": "unzip"
+      },
+      {
+        "type": "find_executable",
+        "cmd": "wget"
+      }
+    ]
+  },
+  "ssh": {
+    "apt": "openssh-client",
+    "yum": "openssh-clients",
+    "pacman": "openssh",
+    "apk": "openssh-client"
+  },
+  "ssh-key": {
+    "as_sudo": false,
+    "requirements": "ssh-keygen",
+    "manual": [
+      "ssh-keygen",
+      "echo new public key:",
+      "cat ${HOME}/.ssh/id_rsa.pub"
+    ],
+    "check_available": [
+      {
+        "type": "file_exists",
+        "file": "${HOME}/.ssh/id_rsa.pub"
+      }
+    ]
+  },
+  "zsh": {
+    "default": "zsh"
+  },
+  "oh-my-zsh": {
+    "as_sudo": false,
+    "check_available": [
+      {
+        "type": "file_exists",
+        "file": "${HOME}/.oh-my-zsh/"
+      }
+    ],
+    "requirements": [
+      "zsh",
+      "sed",
+      "wget"
+    ],
+    "manual": [
+      "wget --show-progress https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O ${HOME}/install-oh-my-zsh.sh",
+      "sed -i -e s/^RUNZSH=.*$/RUNZSH=no/g ${HOME}/install-oh-my-zsh.sh",
+      "sh ${HOME}/install-oh-my-zsh.sh",
+      "rm ${HOME}/install-oh-my-zsh.sh"
+
+    ]
+  },
+  "zsh-syntax-highlighting": {
+    "as_sudo": false,
+    "check_available": [
+      {
+        "type": "file_exists",
+        "file": "${HOME}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/"
+      }
+    ],
+    "requirements": [
+      "zsh",
+      "git",
+      {
+        "type": "file_exists",
+        "file": "${HOME}/.oh-my-zsh/"
+      }
+    ],
+    "manual": "git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${HOME}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+  },
+  "zsh-autosuggestions": {
+    "as_sudo": false,
+    "check_available": [
+      {
+        "type": "file_exists",
+        "file": "${HOME}/.oh-my-zsh/custom/plugins/zsh-autosuggestions/"
+      }
+    ],
+    "requirements": [
+      "zsh",
+      "git",
+      {
+        "type": "file_exists",
+        "file": "${HOME}/.oh-my-zsh/"
+      }
+    ],
+    "manual": "git clone https://github.com/zsh-users/zsh-autosuggestions.git ${HOME}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+  },
+  "bash-it": {
+    "as_sudo": false,
+    "check_available": [
+      {
+        "type": "file_exists",
+        "file": "$HOME/opt/bash_it/"
+      }
+    ],
+    "requirements": [
+      "bash",
+      "git"
+    ],
+    "manual": [
+      "mkdir -p ${HOME}/opt/",
+      "git clone https://github.com/Bash-it/bash-it.git ${HOME}/opt/bash_it",
+      "bash ${HOME}/opt/bash_it/install.sh",
+      "bash ${HOME}/opt/bash_it/bash_it.sh enable completion todo tmux ssh pip pip3 maven git_flow git_flow_avh git docker 'export' dirs conda awscli",
+      "bash ${HOME}/opt/bash_it/bash_it.sh enable plugin xterm z_autoenv todo tmux tmuxinator ssh sshagent java history git extract explain docker dirs browser boot2docker battery aws autojump python",
+      "bash ${HOME}/opt/bash_it/bash_it.sh enable enable alias git todo.txt-cli vagrant curl clipboard apt tmux systemd"
+    ]
+  }
+}

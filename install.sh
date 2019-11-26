@@ -75,4 +75,4 @@ echo "Checking out repository $REPO to $FOLDER ..."
 git clone $REPO $FOLDER
 
 chmod u+x $FOLDER/setup.sh
-. $FOLDER/setup.sh
+source $FOLDER/setup.sh

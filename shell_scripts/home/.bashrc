@@ -23,3 +23,6 @@ if [ -e "$HOME/opt/bash-git-prompt/gitprompt.sh" ] ; then
   GIT_PROMPT_THEME=TruncatedPwd_WindowTitle_Ubuntu
   source "$HOME/opt/bash-git-prompt/gitprompt.sh"
 fi
+
+
+export BASH_IT_THEME='nwinkler'

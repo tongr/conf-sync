@@ -1,0 +1,88 @@
+{
+  "tilda": {
+    "default": "tilda"
+  },
+  "tilda-autostart": {
+    "requirements": "tilda",
+    "check_available": [
+      {
+        "type": "file_exists",
+        "file": "${HOME}/.config/autostart/Terminal.desktop"
+      }
+    ],
+    "manual": [
+      {
+        "type": "write_to_file",
+        "path": "${HOME}/.config/autostart/Terminal.desktop",
+        "content": "[Desktop Entry]\nType=Application\nName=Dropdown Terminal (Tilda)\nExec=tilda\nX-GNOME-Autostart-enabled=true\n"
+      }
+    ]
+  },
+  "guake": {
+    "default": "guake",
+    "apk": null
+  },
+  "guake-autostart": {
+    "requirements": "guake",
+    "check_available": [
+      {
+        "type": "file_exists",
+        "file": "${HOME}/.config/autostart/Terminal.desktop"
+      }
+    ],
+    "manual": [
+      {
+        "type": "write_to_file",
+        "path": "${HOME}/.config/autostart/Terminal.desktop",
+        "content": "[Desktop Entry]\nType=Application\nName=Dropdown Terminal (Guake)\nExec=guake\nX-GNOME-Autostart-enabled=true\n"
+      }
+    ]
+  },
+  "intellij": {
+    "snap": "intellij-idea-{edition} --classic",
+    "check_available": [
+      "pycharm-community",
+      "pycharm-ultimate"
+    ],
+    "flavors": {
+      "edition": [
+        "community",
+        "ultimate"
+      ]
+    }
+  },
+  "pycharm": {
+    "snap": "pycharm-{edition} --classic",
+    "check_available": [
+      "pycharm-community",
+      "pycharm-ultimate"
+    ],
+    "flavors": {
+      "edition": [
+        "community",
+        "ultimate"
+      ]
+    }
+  },
+  "git-cola": {
+    "snap": "git-cola"
+  },
+  "gitkraken": {
+    "snap": "gitkraken"
+  },
+  "spotify": {
+    "snap": "spotify"
+  },
+  "skype": {
+    "snap": "skype"
+  },
+  "gimp": {
+    "snap": "gimp"
+  },
+  "bitwarden": {
+    "snap": "bitwarden"
+  },
+  "xournal": {
+    "snap": "xournal"
+  }
+}
