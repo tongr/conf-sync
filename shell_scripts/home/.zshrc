@@ -58,14 +58,17 @@ HIST_STAMPS="yyyy-mm-dd"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
+  aws
+  colored-man-pages
   common-aliases
+  docker
+  docker-compose
+  extract
   git
   git-flow-avh
   git-extras
+  kubectl
   tmux
-  docker
-  colored-man-pages
-  extract
 )
 #aws
 #cp
@@ -91,3 +94,15 @@ zstyle ':completion:*:git*c(o|heckout):*' show-completer true
 autoload -U compinit promptinit
 compinit
 
+# add user binaries to paths if it exists
+if [ -d "${HOME}/opt/bin" ] ; then
+  PATH="${HOME}/opt/bin:${PATH}"
+fi
+if [ -d "${HOME}/bin" ] ; then
+  PATH="${HOME}/bin:${PATH}"
+fi
+
+# check if we can find anaconda3
+if [ -e "${HOME}/anaconda3/etc/profile.d/conda.sh" ] ; then
+  source "${HOME}/anaconda3/etc/profile.d/conda.sh"
+fi
