@@ -1,3 +1,11 @@
+# add user binaries to paths if it exists
+if [ -d "${HOME}/opt/bin" ] ; then
+  PATH="${HOME}/opt/bin:${PATH}"
+fi
+if [ -d "${HOME}/bin" ] ; then
+  PATH="${HOME}/bin:${PATH}"
+fi
+
 # try to identify the session type
 if [ -z "$SESSION_TYPE" ]; then
   #default: local
@@ -67,7 +75,6 @@ plugins=(
   git
   git-flow-avh
   git-extras
-  kubectl
   tmux
 )
 #aws
@@ -94,12 +101,9 @@ zstyle ':completion:*:git*c(o|heckout):*' show-completer true
 autoload -U compinit promptinit
 compinit
 
-# add user binaries to paths if it exists
-if [ -d "${HOME}/opt/bin" ] ; then
-  PATH="${HOME}/opt/bin:${PATH}"
-fi
-if [ -d "${HOME}/bin" ] ; then
-  PATH="${HOME}/bin:${PATH}"
+# add kubectl autocomplete if available
+if [ $(command -v kubectl) ]; then
+  source <(kubectl completion zsh);
 fi
 
 # check if we can find anaconda3
