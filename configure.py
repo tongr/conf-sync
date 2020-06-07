@@ -524,15 +524,20 @@ class ColoredConsole:
                         self.error("  Unable to install `{}`, no suitable package manager found!".format(software.name))
 
 
-def start():
+def start(*package_lists):
     cli = ColoredConsole()
-    cli.headline("Basic software packages ...", list_installers=True)
-    cli.choose_installers(Software.parse_list("install/basics.json"))
-    cli.headline("Desktop software packages ...")
-    cli.choose_installers(Software.parse_list("install/desktop.json"))
-    cli.headline("Development software packages ...")
-    cli.choose_installers(Software.parse_list("install/development.json"))
+    if package_lists:
+        for idx, package_list in enumerate(package_lists):
+            cli.headline("Installing software from {} ...".format(package_list), list_installers=idx==0)
+            cli.choose_installers(Software.parse_list(package_list))
+    else:
+        cli.headline("Basic software packages ...", list_installers=True)
+        cli.choose_installers(Software.parse_list("install/basics.json"))
+        cli.headline("Desktop software packages ...")
+        cli.choose_installers(Software.parse_list("install/desktop.json"))
+        cli.headline("Development software packages ...")
+        cli.choose_installers(Software.parse_list("install/development.json"))
 
 
 if __name__ == '__main__':
-    start()
+    start(*sys.argv[1:])
