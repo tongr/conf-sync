@@ -84,5 +84,8 @@
   },
   "xournal": {
     "snap": "xournal"
+  },
+  "kontena-lens": {
+    "snap": "kontena-lens --classic"
   }
 }

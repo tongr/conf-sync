@@ -43,6 +43,14 @@ alias pidg="pidgrep"
 which git 2>&1 > /dev/null && alias diff="git diff --no-index"
 
 #
+# CLI K8S manager
+#
+if hash docker 2>/dev/null; then
+  alias kubebox="docker run -it --rm -v ~/.kube/:/home/node/.kube/:ro astefanutti/kubebox"
+fi
+
+
+#
 # fixes for annoying ubuntu problems
 #
 # restart network manager in case of wifi problems after suspend

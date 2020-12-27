@@ -43,6 +43,21 @@
     ],
     "pacman": "docker"
   },
+  "kind": {
+    "flavors": {
+      "architecture": [
+        "**linux-amd64**",
+        "linux-arm64",
+        "linux-ppc64le"
+      ]
+    },
+    "manual": [
+      "wget --show-progress https://kind.sigs.k8s.io/dl/latest/kind-{architecture} -O ${HOME}/kind",
+      "mkdir -p /usr/local/bin/",
+      "install ${HOME}/kind /usr/local/bin/",
+      "rm ${HOME}/kind"
+    ]
+  },
   "minikube": {
     "flavors": {
       "architecture": [
@@ -59,6 +74,17 @@
       "mkdir -p /usr/local/bin/",
       "install ${HOME}/minikube /usr/local/bin/",
       "rm ${HOME}/minikube"
+    ]
+  },
+  "k9s": {
+    "pacman": "k9s",
+    "snap": "k9s"
+  },
+  "k3s": {
+    "manual": [
+      "wget --show-progress https://get.k3s.io -O ${HOME}/k3s-install.sh",
+      "sh ${HOME}/k3s-install.sh",
+      "rm ${HOME}/k3s-install.sh"
     ]
   },
   "conda": {
@@ -110,6 +136,26 @@
       "mkdir -p ${HOME}/opt/bin",
       "bash ${HOME}/aws/install --install-dir ${HOME}/opt/aws-cli --bin-dir ${HOME}/opt/bin/",
       "rm -rf  ${HOME}/aws ${HOME}/awscliv2.zip"
+    ]
+  },
+  "helm": {
+    "flavors": {
+      "version": "v3.4.2",
+      "architecture": [
+        "**linux-amd64**",
+        "linux-arm",
+        "linux-arm64",
+        "linux-386",
+        "linux-ppc64le",
+        "linux-s390x"
+      ]
+    },
+    "manual": [
+      "wget --show-progress https://get.helm.sh/helm-{version}-{architecture}.tar.gz -O ${HOME}/helm.tgz",
+      "mkdir -p /usr/local/bin/ ${HOME}/helm/",
+      "tar -zxvf ${HOME}/helm.tgz -C ${HOME}/helm/",
+      "install ${HOME}/helm/{architecture}/helm /usr/local/bin/",
+      "rm -rf ${HOME}/helm.tgz ${HOME}/helm"
     ]
   }
 }
