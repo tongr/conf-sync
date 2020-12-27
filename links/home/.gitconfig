@@ -5,10 +5,10 @@
 	ci = commit
 	st = status
 	br = branch
-	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+	hist = log --pretty=format:\"%C(yellow)%>|(12)%h %C(blue)%as%C(green) [%>(14,trunc)%an]%C(reset): %s%C(auto)%d\" --graph --all --decorate
 	type = cat-file -t
 	dump = cat-file -p
-        ls = ls-tree -r --name-only
+	ls = ls-tree -r --name-only
 [user]
 	name = tongr
 	email = tongr@online
