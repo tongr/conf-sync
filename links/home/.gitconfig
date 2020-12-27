@@ -1,5 +1,7 @@
 [alias]
 	co = checkout
+        refreshdev = "! deps=$(git branch --merged=develop | grep -v develop | grep -v master | xargs) && if [ -z "$deps" ]; then git co develop && git fetch --prune && git merge origin/develop; else git co develop && git branch -d $deps && git fetch --prune && git merge origin/develop; fi"
+        refreshmaster = "! deps=$(git branch --merged=master | grep -v develop | grep -v master | xargs) && if [ -z "$deps" ]; then git co master && git fetch --prune && git merge origin/master; else git co master && git branch -d $deps && git fetch --prune && git merge origin/master; fi"
 	ci = commit
 	st = status
 	br = branch

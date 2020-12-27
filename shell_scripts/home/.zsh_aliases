@@ -18,6 +18,24 @@ pidgrepa() { psgrepa "$*" | awk '{print $2}'; }
 # use git diff instead of std diff if possible
 which git 2>&1 > /dev/null && alias diff="git diff --no-index"
 
+# add util to refresh git development branch
+git-refreshdev() {
+  local deps="$(git branch --merged=develop | grep -v "develop\|master" | xargs)"
+  if [ -z "$var" ]; then
+    echo "git co develop && git branch -d $deps && git fetch --prune && git merge origin/develop"
+  else
+    echo "git co develop && git fetch --prune && git merge origin/develop"
+  fi
+}
+git-refreshmaster() {
+  local deps="$(git branch --merged=master | grep -v "develop\|master" | xargs)"
+  if [ -z "$var" ]; then
+    echo "git co master && git branch -d $deps && git fetch --prune && git merge origin/master"
+  else
+    echo "git co master && git fetch --prune && git merge origin/master"
+  fi
+}
+
 #
 # fixes for annoying ubuntu problems
 #
