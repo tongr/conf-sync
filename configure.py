@@ -187,10 +187,12 @@ class Software:
     def check_requirements(self, cli):
         if self.__requirements is None:
             return True
+        cli.info("Checking requirements for {name} ...".format(name=self.name))
         return cli.run_all(
             cmds=self.__requirements,
             default_action=cli.is_installed,
             value_wrapper=self.__add_flavors,
+            log=True,
         )
 
     def is_available(self, cli):
