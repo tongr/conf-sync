@@ -85,6 +85,9 @@
   "xournal": {
     "snap": "xournal"
   },
+  "dbeaver-ce": {
+    "snap": "dbeaver-ce"
+  },
   "kontena-lens": {
     "snap": "kontena-lens --classic"
   }

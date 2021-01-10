@@ -136,6 +136,7 @@
       "mkdir -p /usr/local/bin/ ${HOME}/helm/",
       "tar -zxvf ${HOME}/helm.tgz -C ${HOME}/helm/",
       "install ${HOME}/helm/{architecture}/helm /usr/local/bin/",
+      "helm repo add stable https://charts.helm.sh/stable",
       "rm -rf ${HOME}/helm.tgz ${HOME}/helm"
     ]
   },
