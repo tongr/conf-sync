@@ -111,6 +111,7 @@
     "snap": "k9s"
   },
   "kubectl": {
+    "pacman": "kubectl",
     "snap": "kubectl --classic"
   },
   "helm": {
@@ -131,6 +132,7 @@
       "gzip",
       "wget"
     ],
+    "pacman": "helm",
     "manual": [
       "wget --show-progress https://get.helm.sh/helm-{version}-{architecture}.tar.gz -O ${HOME}/helm.tgz",
       "mkdir -p /usr/local/bin/ ${HOME}/helm/",
@@ -157,11 +159,10 @@
       "wget --show-progress https://repo.anaconda.com/miniconda/Miniconda3-latest-{architecture}.sh -O ${HOME}/Miniconda3-latest-{architecture}.sh",
       "bash ${HOME}/Miniconda3-latest-{architecture}.sh -b -f -p ${HOME}/miniconda3",
       {
-        "write_to_file": {
-          "name": "${HOME}/.zshrc",
-          "mode": "a",
-          "content": "# activate conda\nsource ${HOME}/miniconda3/etc/profile.d/conda.sh\n"
-        }
+        "type": "write_to_file",
+        "path": "${HOME}/.zshrc",
+        "mode": "a",
+        "content": "# activate conda\nsource ${HOME}/miniconda3/etc/profile.d/conda.sh\n"
       },
       "rm ${HOME}/Miniconda3-latest-{architecture}.sh"
     ]

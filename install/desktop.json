@@ -77,6 +77,7 @@
     "snap": "skype"
   },
   "gimp": {
+    "pacman": "gimp",
     "snap": "gimp"
   },
   "bitwarden": {
@@ -85,7 +86,8 @@
   "xournal": {
     "snap": "xournal"
   },
-  "dbeaver-ce": {
+  "dbeaver": {
+    "pacman": "dbeaver",
     "snap": "dbeaver-ce"
   },
   "kontena-lens": {
