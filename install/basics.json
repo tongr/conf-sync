@@ -118,6 +118,24 @@
     ],
     "manual": "git clone https://github.com/zsh-users/zsh-autosuggestions.git ${HOME}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
   },
+  "zsh-powerlevel10k": {
+    "as_sudo": false,
+    "check_available": [
+      {
+        "type": "file_exists",
+        "file": "${HOME}/.oh-my-zsh/custom/themes/powerlevel10k/"
+      }
+    ],
+    "requirements": [
+      "zsh",
+      "git",
+      {
+        "type": "file_exists",
+        "file": "${HOME}/.oh-my-zsh/"
+      }
+    ],
+    "manual": "git clone https://github.com/romkatv/powerlevel10k.git ${HOME}/.oh-my-zsh/custom/themes/powerlevel10k"
+  },
   "bash-it": {
     "as_sudo": false,
     "check_available": [

@@ -54,8 +54,12 @@ export ZSH=$HOME/.oh-my-zsh
 # ZSH_THEME="gnzh"
 # ZSH_THEME="amuse"
 # ZSH_THEME="junkfood"
-#custom linked theme
-ZSH_THEME="my_junkfood"
+if [[ -e "${HOME}/.oh-my-zsh/custom/themes/powerlevel10k/" ]]; then
+  ZSH_THEME="powerlevel10k/powerlevel10k"
+else
+  #custom linked theme
+  ZSH_THEME="my_junkfood"
+fi
 
 # Change the command execution timestamp shown in the history command output.
 # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
