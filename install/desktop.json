@@ -22,20 +22,11 @@
     "default": "guake",
     "apk": null
   },
-  "guake-autostart": {
+  "guake-configure": {
+    "as_sudo": false,
     "requirements": "guake",
-    "check_available": [
-      {
-        "type": "file_exists",
-        "file": "${HOME}/.config/autostart/Terminal.desktop"
-      }
-    ],
     "manual": [
-      {
-        "type": "write_to_file",
-        "path": "${HOME}/.config/autostart/Terminal.desktop",
-        "content": "[Desktop Entry]\nType=Application\nName=Dropdown Terminal (Guake)\nExec=guake\nX-GNOME-Autostart-enabled=true\n"
-      }
+      "guake --restore-preferences configs/guake_prefs"
     ]
   },
   "intellij": {

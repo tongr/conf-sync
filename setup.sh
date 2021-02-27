@@ -25,11 +25,11 @@ yes_no () {
 #
 answer=$(yes_no "Do you want to install various software packages?")
 if [ "y" == "$answer" ]; then
-  python $ROOT_DIR/configure.py
+  pushd $ROOT_DIR
+  python configure.py
+  popd
 fi
 
-
-echo "Setting up synchronized scripts from $SCRIPT_DIR ..."
 
 #
 # setup symbolic links
@@ -66,6 +66,7 @@ if [ "y" == "$answer" ]; then
   done
 fi
 
+
 #
 # setup shell scripts
 #
@@ -96,6 +97,7 @@ if [ "y" == "$answer" ]; then
     done
   done
 fi
+
 
 echo "Setup finished!"
 
