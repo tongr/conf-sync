@@ -32,8 +32,13 @@
   "intellij": {
     "snap": "intellij-idea-{edition} --classic",
     "check_available": [
-      "pycharm-community",
-      "pycharm-ultimate"
+      {
+        "type": "file_exists",
+        "file": [
+          "/snap/intellij-idea-community/current/bin/idea.sh",
+          "/snap/intellij-idea-ultimate/current/bin/idea.sh"
+        ]
+      }
     ],
     "flavors": {
       "edition": [
@@ -45,13 +50,18 @@
   "pycharm": {
     "snap": "pycharm-{edition} --classic",
     "check_available": [
-      "pycharm-community",
-      "pycharm-ultimate"
+      {
+        "type": "file_exists",
+        "file": [
+          "/snap/pycharm-community/current/bin/pycharm.sh",
+          "/snap/pycharm-professional/current/bin/pycharm.sh"
+        ]
+      }
     ],
     "flavors": {
       "edition": [
         "community",
-        "ultimate"
+        "professional"
       ]
     }
   },

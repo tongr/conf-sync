@@ -460,7 +460,11 @@ class ColoredConsole:
             if cmds["type"] == "find_executable":
                 return self.is_installed(value_wrapper(cmds["cmd"]))
             if cmds["type"] == "file_exists":
-                return self.file_exists(value_wrapper(cmds["file"]))
+                filenames = cmds["file"]
+                if isinstance(filenames, list):
+                    # multiple file combination: OR
+                    return any(self.file_exists(value_wrapper(file)) for file in filenames)
+                return self.file_exists(value_wrapper(filenames))
             if cmds["type"] == "write_to_file":
                 return self.write_to_file(**{key: value_wrapper(val) for key, val in cmds.items() if key != "type"})
             if cmds["type"] == "lambda":
