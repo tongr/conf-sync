@@ -107,9 +107,17 @@ zstyle ':completion:*:git*c(o|heckout):*' show-completer true
 autoload -U compinit promptinit
 compinit
 
-
+# make `host.docker.internal` available via docker run ... $DOCKER_HOST_INTERNAL ...
+DOCKER_HOST_INTERNAL="--add-host=host.docker.internal:host-gateway"
 
 # activate miniconda3 (if exists)
 if [ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]; then
     source "${HOME}/miniconda3/etc/profile.d/conda.sh"
+fi
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+if [ -f "${HOME}/.p10k.zsh" ]; then
+  source "${HOME}/.p10k.zsh"
+elif typeset -f p10k > /dev/null; then
+  p10k configure
 fi

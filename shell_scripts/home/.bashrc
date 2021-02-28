@@ -24,5 +24,13 @@ if [ -e "$HOME/opt/bash-git-prompt/gitprompt.sh" ] ; then
   source "$HOME/opt/bash-git-prompt/gitprompt.sh"
 fi
 
-
 export BASH_IT_THEME='nwinkler'
+
+# make `host.docker.internal` available via docker run ... $DOCKER_HOST_INTERNAL ...
+DOCKER_HOST_INTERNAL="--add-host=host.docker.internal:host-gateway"
+
+# activate miniconda3 (if exists)
+if [ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]; then
+    source "${HOME}/miniconda3/etc/profile.d/conda.sh"
+fi
+

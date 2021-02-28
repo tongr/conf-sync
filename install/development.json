@@ -47,6 +47,9 @@
     ],
     "pacman": "docker"
   },
+  "docker-compose": {
+    "pacman": "docker-compose"
+  },
   "kind": {
     "flavors": {
       "architecture": [
@@ -158,14 +161,11 @@
     "manual": [
       "wget --show-progress https://repo.anaconda.com/miniconda/Miniconda3-latest-{architecture}.sh -O ${HOME}/Miniconda3-latest-{architecture}.sh",
       "bash ${HOME}/Miniconda3-latest-{architecture}.sh -b -f -p ${HOME}/miniconda3",
-      {
-        "type": "write_to_file",
-        "path": "${HOME}/.zshrc",
-        "mode": "a",
-        "content": "# activate conda\nsource ${HOME}/miniconda3/etc/profile.d/conda.sh\n"
-      },
       "rm ${HOME}/Miniconda3-latest-{architecture}.sh"
     ]
+  },
+  "minio": {
+    "pacman": "minio"
   },
   "aws": {
     "as_sudo": false,

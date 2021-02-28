@@ -79,7 +79,6 @@
       "sed -i -e s/^RUNZSH=.*$/RUNZSH=no/g ${HOME}/install-oh-my-zsh.sh",
       "sh ${HOME}/install-oh-my-zsh.sh",
       "rm ${HOME}/install-oh-my-zsh.sh"
-
     ]
   },
   "zsh-syntax-highlighting": {
