@@ -92,14 +92,13 @@
       ]
     },
     "requirements": [
-      "DEACTIVATED",
       "install",
       "wget"
     ],
     "manual": [
       "wget --show-progress https://storage.googleapis.com/minikube/releases/latest/minikube-{architecture} -O ${HOME}/minikube",
       "mkdir -p /usr/local/bin/",
-      "install ${HOME}/minikube /usr/local/bin/",
+      "install ${HOME}/minikube /usr/local/bin/minikube",
       "rm ${HOME}/minikube"
     ]
   },
