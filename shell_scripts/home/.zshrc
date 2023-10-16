@@ -5,6 +5,10 @@ fi
 if [ -d "${HOME}/bin" ] ; then
   PATH="${HOME}/bin:${PATH}"
 fi
+# add snapcraft k9s to path because it is not properly supported
+if [ -f "/snap/k9s/current/bin/k9s" ]; then
+  PATH="${PATH}:/snap/k9s/current/bin"
+fi
 
 # try to identify the session type
 if [ -z "$SESSION_TYPE" ]; then

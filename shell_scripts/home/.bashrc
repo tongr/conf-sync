@@ -2,6 +2,10 @@
 if [ -d "$HOME/bin" ] ; then
   PATH="$HOME/bin:$PATH"
 fi
+# add snapcraft k9s to path because it is not properly supported
+if [ -f "/snap/k9s/current/bin/k9s" ]; then
+  PATH="${PATH}:/snap/k9s/current/bin"
+fi
 
 # activate bash auto-completion for tmux cli
 if [ -e "/usr/share/doc/tmux/examples/bash_completion_tmux.sh" ] ; then
