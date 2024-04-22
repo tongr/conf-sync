@@ -135,6 +135,7 @@
       "wget"
     ],
     "pacman": "helm",
+    "snap": "helm --classic",
     "manual": [
       "wget --show-progress https://get.helm.sh/helm-{version}-{architecture}.tar.gz -O ${HOME}/helm.tgz",
       "mkdir -p /usr/local/bin/ ${HOME}/helm/",
